@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+    <link rel="stylesheet" href="css/normalize.min.css">
+    <link rel="stylesheet" href="css/main.css">
+
+    <script type="text/javascript" src="js/openmpt.js"></script>
+    <script type="text/javascript" src="js/chiptune2.js"></script>
+    <script type="text/javascript">
+      var player;
+      var context = new AudioContext();
+
+      function init() {
+        if (player != undefined) {
+          player.stop();
+        }
+        player = new ChiptuneJsPlayer(new ChiptuneJsConfig(context, 500, 2000, 1));
+      }
+
+      function loadURL(path) {
+        init();
+        player.load(path, function() {
+          document.querySelector(".loadedfile").innerHTML = path;
+          player.play();
+        });
+      }
+
+      var fileaccess = document.querySelector("*");
+      fileaccess.ondrop = function(e) {
+        e.preventDefault();
+        var file = e.dataTransfer.files[0];
+        init();
+
+        player.load(file, function() {
+          document.querySelector(".loadedfile").innerHTML = file.name;
+          player.play();
+        });
+      }
+
+      fileaccess.ondragenter = function(e){e.preventDefault();}
+      fileaccess.ondragover = function(e){e.preventDefault();}
+    </script>
+  </head>
+  <body>
+    <div id="headphones"></div>
+    <div id="content">
+      <div id="info">
+        <p>Usage: Drop any module file (.mod, .xm, .it, etc.) on this page and hit play!</p>
+      </div>
+      <div id="headline"><span>chiptune.js</span></div>
+      <div id="controls">
+        <span class="loadedfile">nothing loaded</span><br>
+        <a onclick="player.togglePause()" id="pause" class="control"></a>
+      </div>
+      <div id="demosong"><a onclick="loadURL('tunes/mysteristerium.mod')" herf="#">Load demo song<br>(mysterysterium by maktone)</a></div>
+    </div>
+  </body>
+</html>
