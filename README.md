@@ -27,6 +27,18 @@ See it in action [here](http://deskjet.github.io/chiptune2.js/).
 
 Just drop a module (e.g. from [modarchive.org](http://modarchive.org)) on the demo page and enjoy.
 
+## Development
+To compile libopenmpt to javascript you need a recent version of [emscripten](https://github.com/kripken/emscripten). Take a look at thier wiki for instructions. Make sure you have it setup correctly and emcc is in your PATH.  
+With emscripten ready you should get a copy of libopenmpt. For now use [this repository](https://github.com/deskjet/libopenmpt).
+The first step is to create a bytecode shared library.
+
+    make CONFIG=emscripten
+
+This will create `libopenmpt.so` inside the bin directory.
+To compile this file to Javascript use this command:
+
+    emcc -v -O3 libopenmpt.so -o openmpt.js -s EXPORTED_FUNCTIONS="['_openmpt_module_create_from_memory','_openmpt_module_destroy','_openmpt_module_read_float_stereo', '_openmpt_module_destroy', '_openmpt_module_set_repeat_count', '_openmpt_module_get_duration_seconds', '_openmpt_module_set_position_seconds', '_openmpt_module_get_position_seconds', '_openmpt_module_get_metadata_keys', '_openmpt_module_get_metadata']"
+
 ## License
 
 All code in this project is MIT (X11) licensed. The only exception are the compiled libopenmpt parts which remain under the OpenMPT project BSD license.
