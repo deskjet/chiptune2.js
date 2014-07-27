@@ -28,16 +28,15 @@ See it in action [here](http://deskjet.github.io/chiptune2.js/).
 Just drop a module (e.g. from [modarchive.org](http://modarchive.org)) on the demo page and enjoy.
 
 ## Development
-To compile libopenmpt to javascript you need a recent version of [emscripten](https://github.com/kripken/emscripten). Take a look at thier wiki for instructions. Make sure you have it setup correctly and emcc is in your PATH.  
-With emscripten ready you should get a copy of libopenmpt. For now use [this repository](https://github.com/deskjet/libopenmpt).
-The first step is to create a bytecode shared library.
+To compile libopenmpt to javascript you need a recent version of [emscripten](https://github.com/kripken/emscripten). Take a look at thier wiki for building instructions. Make sure you have it setup correctly and `emcc` is in your PATH.  
+With emscripten ready you should get a copy of libopenmpt. Go to [thier website](http://lib.openmpt.org/libopenmpt/), download the latest snapshot and extract it.  
+Now you're ready to build. Use this command:
 
     make CONFIG=emscripten
 
-This will create `libopenmpt.so` inside the bin directory.
-To compile this file to Javascript use this command:
-
-    emcc -v -O3 libopenmpt.so -o openmpt.js -s EXPORTED_FUNCTIONS="['_openmpt_module_create_from_memory','_openmpt_module_destroy','_openmpt_module_read_float_stereo', '_openmpt_module_destroy', '_openmpt_module_set_repeat_count', '_openmpt_module_get_duration_seconds', '_openmpt_module_set_position_seconds', '_openmpt_module_get_position_seconds', '_openmpt_module_get_metadata_keys', '_openmpt_module_get_metadata']"
+If it runs successfully two file will be created inside the `bin` directory.
+1. `libopenmpt.js` is the library you want. You can use it with chiptune2.js.
+2. `libopenmpt_test.js` is the libopenmpt test suite. It is meant to run in nodejs.
 
 ## License
 
@@ -45,7 +44,7 @@ All code in this project is MIT (X11) licensed. The only exception are the compi
 
 License text below:
 
->Copyright © 2013 Simon Gündling.
+>Copyright © 2013-2014 Simon Gündling.
 >
 >Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 >
