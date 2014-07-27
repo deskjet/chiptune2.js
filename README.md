@@ -34,7 +34,8 @@ Now you're ready to build. Use this command:
 
     make CONFIG=emscripten
 
-If it runs successfully two file will be created inside the `bin` directory.
+If it runs successfully two file will be created inside the `bin` directory.  
+
 1. `libopenmpt.js` is the library you want. You can use it with chiptune2.js.
 2. `libopenmpt_test.js` is the libopenmpt test suite. It is meant to run in nodejs.
 
