@@ -20,14 +20,14 @@
         if (player != undefined) {
           player.stop();
         }
-        player = new ChiptuneJsPlayer(new ChiptuneJsConfig(context, 500, 2000, 1));
+        player = new ChiptuneJsPlayer(context, new ChiptuneJsConfig(1));
       }
 
       function loadURL(path) {
         init();
-        player.load(path, function() {
+        player.load(path, function(buffer) {
           document.querySelector(".loadedfile").innerHTML = path;
-          player.play();
+          player.play(buffer);
         });
       }
 
@@ -37,9 +37,9 @@
         var file = e.dataTransfer.files[0];
         init();
 
-        player.load(file, function() {
+        player.load(file, function(buffer) {
           document.querySelector(".loadedfile").innerHTML = file.name;
-          player.play();
+          player.play(buffer);
         });
       }
 
