@@ -31,6 +31,14 @@
         });
       }
 
+      function loadFile(file) {
+        init();
+        player.load(file, function(buffer) {
+          document.querySelector(".loadedfile").innerHTML = file.name;
+          player.play(buffer);
+        });
+      }
+
       var fileaccess = document.querySelector("*");
       fileaccess.ondrop = function(e) {
         e.preventDefault();
@@ -58,7 +66,11 @@
         <span class="loadedfile">nothing loaded</span><br>
         <a onclick="player.togglePause()" id="pause" class="control"></a>
       </div>
-      <div id="demosong"><a onclick="loadURL('tunes/mysteristerium.mod')" herf="#">Load demo song<br>(mysterysterium by maktone)</a></div>
+      <div id="demosong"><a onclick="loadURL('tunes/mysteristerium.mod')" href="#">Load demo song<br>(mysterysterium by maktone)</a>
+      <br/>
+      <br /><input type="file" id="files" name="files" onchange="loadFile(this.files[0])"/>
+      <br/>
+      </div>
     </div>
   </body>
 </html>
