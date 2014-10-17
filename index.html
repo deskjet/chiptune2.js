@@ -21,6 +21,7 @@
         }
         else {
           player.stop();
+          pausePauseButton();
         }
       }
 
@@ -29,6 +30,7 @@
         player.load(path, function(buffer) {
           document.querySelector(".loadedfile").innerHTML = path;
           player.play(buffer);
+          playPauseButton();
         });
       }
 
@@ -37,7 +39,42 @@
         player.load(file, function(buffer) {
           document.querySelector(".loadedfile").innerHTML = file.name;
           player.play(buffer);
+          playPauseButton();
         });
+      }
+
+      function pauseButton() {
+        player.togglePause();
+        switchPauseButton();
+      }
+
+      function switchPauseButton() {
+        var button = document.getElementById('pause')
+        if (button) {
+          button.id = "play_tmp";
+        }
+        button = document.getElementById('play')
+        if (button) {
+          button.id = "pause";
+        }
+        button = document.getElementById('play_tmp')
+        if (button) {
+          button.id = "play";
+        }
+      }
+
+      function playPauseButton() {
+        var button = document.getElementById('pause')
+        if (button) {
+          button.id = "play";
+        }
+      }
+
+      function pausePauseButton() {
+        var button = document.getElementById('play')
+        if (button) {
+          button.id = "pause";
+        }
       }
 
       var fileaccess = document.querySelector("*");
@@ -71,7 +108,7 @@
       </div>
       <div id="controls" class="banner">
         <span class="loadedfile">nothing loaded</span><br>
-        <a onclick="player.togglePause()" id="pause" class="control"></a>
+        <a onclick="pauseButton()" id="pause" class="control"></a>
       </div>
       <div id="choosefile" class="banner">
         <br/>
