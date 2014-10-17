@@ -1,9 +1,14 @@
+// audio context
+ChiptuneAudioContext = AudioContext || webkitAudioContext;
+
+// config
 function ChiptuneJsConfig(repeatCount) {
   this.repeatCount = repeatCount;
 }
 
-function ChiptuneJsPlayer(context, config) {
-  this.context = context;
+// player
+function ChiptuneJsPlayer(config) {
+  this.context = new ChiptuneAudioContext;
   this.config = config;
   this.currentPlayingNode = null;
 }

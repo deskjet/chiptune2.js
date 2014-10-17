@@ -8,19 +8,20 @@
     <meta name="viewport" content="width=device-width">
 
     <link rel="stylesheet" href="css/normalize.min.css">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/screen.css">
 
     <script type="text/javascript" src="js/libopenmpt.js"></script>
     <script type="text/javascript" src="js/chiptune2.js"></script>
     <script type="text/javascript">
       var player;
-      var context = new AudioContext();
 
       function init() {
-        if (player != undefined) {
+        if (player == undefined) {
+          player = new ChiptuneJsPlayer(new ChiptuneJsConfig(1));
+        }
+        else {
           player.stop();
         }
-        player = new ChiptuneJsPlayer(context, new ChiptuneJsConfig(1));
       }
 
       function loadURL(path) {
@@ -56,20 +57,26 @@
     </script>
   </head>
   <body>
-    <div id="headphones"></div>
+    <div class="bg bg1"></div>
     <div id="content">
-      <div id="info">
+      <div id="info" class="banner">
         <p>Usage: Drop any module file (.mod, .xm, .it, etc.) on this page and hit play!</p>
       </div>
-      <div id="headline"><span>chiptune.js</span></div>
-      <div id="controls">
+      <div id="headline" class="banner"><h1>chiptune.js</h1></div>
+      <div id="demosong" class="banner">
+        <a onclick="loadURL('tunes/mysteristerium.mod')" href="#">
+          Load demo song<br>
+          (mysterysterium by maktone)
+        </a>
+      </div>
+      <div id="controls" class="banner">
         <span class="loadedfile">nothing loaded</span><br>
         <a onclick="player.togglePause()" id="pause" class="control"></a>
       </div>
-      <div id="demosong"><a onclick="loadURL('tunes/mysteristerium.mod')" href="#">Load demo song<br>(mysterysterium by maktone)</a>
-      <br/>
-      <br /><input type="file" id="files" name="files" onchange="loadFile(this.files[0])"/>
-      <br/>
+      <div id="choosefile" class="banner">
+        <br/>
+        <br /><input type="file" id="files" name="files" onchange="loadFile(this.files[0])"/>
+        <br/>
       </div>
     </div>
   </body>
