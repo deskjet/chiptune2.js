@@ -13,6 +13,25 @@ function ChiptuneJsPlayer(config) {
   this.currentPlayingNode = null;
 }
 
+// metadata
+ChiptuneJsPlayer.prototype.duration = function() {
+  return Module._openmpt_module_get_duration_seconds(this.currentPlayingNode.modulePtr);
+}
+
+ChiptuneJsPlayer.prototype.metadata = function() {
+  var data = {};
+  var keys = Module.Pointer_stringify(Module._openmpt_module_get_metadata_keys(this.currentPlayingNode.modulePtr)).split(';');;
+  var keyNameBuffer = 0;
+  for (i = 0; i < keys.length; i++) {
+    keyNameBuffer = Module._malloc(keys[i].length + 1);
+    Module.writeStringToMemory(keys[i], keyNameBuffer);
+    data[keys[i]] = Module.Pointer_stringify(Module._openmpt_module_get_metadata(player.currentPlayingNode.modulePtr, keyNameBuffer));
+    Module._free(keyNameBuffer);
+  }
+  return data;
+}
+
+// playing, etc
 ChiptuneJsPlayer.prototype.load = function(input, callback) {
   if (input instanceof File) {
     var reader = new FileReader();
