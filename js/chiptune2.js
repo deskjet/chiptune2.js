@@ -96,11 +96,11 @@ ChiptuneJsPlayer.prototype.createLibopenmptNode = function(buffer, config) {
     }
     if (this.leftBufferPtr != 0) {
       Module._free(this.leftBufferPtr);
-      leftBufferPtr = 0;
+      this.leftBufferPtr = 0;
     }
     if (this.rightBufferPtr != 0) {
       Module._free(this.rightBufferPtr);
-      rightBufferPtr = 0;
+      this.rightBufferPtr = 0;
     }
   }
   processNode.stop = function() {
