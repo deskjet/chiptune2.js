@@ -96,6 +96,42 @@ body {
   margin-top: 1.9rem;
 }
 
+#demos {
+  text-align: center;
+}
+#demos > div {
+  display: inline-block;
+  margin: 0 auto;
+  text-align: left;
+  border-radius: 0.35rem;
+  border: 1px solid rgba(215, 99, 34, 0.78);
+  padding: 1rem;
+  background: white;
+}
+#demos > div h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.3rem;
+}
+#demos > div .song {
+  display: block;
+  text-decoration: none;
+  color: #4c4cbd;
+}
+#demos > div .song + .song {
+  margin-top: 0.65rem;
+}
+#demos > div .song .size {
+  vertical-align: super;
+  font-size: 0.6rem;
+  margin-left: 0.3rem;
+}
+#demos > div .song .size:before {
+  content: "(";
+}
+#demos > div .song .size:after {
+  content: ")";
+}
+
 .control {
   width: 5rem;
   height: 5rem;

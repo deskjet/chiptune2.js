@@ -87,6 +87,34 @@ body
 
 #choosefile, #controls
     margin-top: 1.9rem
+
+#demos
+    text-align: center
+    > div
+        display: inline-block
+        margin: 0 auto
+        text-align: left
+        border-radius: 0.35rem
+        border: 1px solid rgba(215, 99, 34, 0.78)
+        padding: 1rem
+        background: #fff
+        h2
+            margin: 0 0 0.5rem 0
+            font-size: 1.3rem
+        .song
+            display: block
+            text-decoration: none
+            color: #4C4CBD
+            + .song
+                margin-top: 0.65rem
+            .size
+                vertical-align: super
+                font-size: 0.6rem
+                margin-left: 0.3rem
+                &:before
+                    content: "("
+                &:after
+                    content: ")"
     
 
 .control

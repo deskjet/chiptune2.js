@@ -21,7 +21,7 @@
         }
         else {
           player.stop();
-          pausePauseButton();
+          playPauseButton();
         }
       }
 
@@ -47,7 +47,7 @@
         player.load(path, function(buffer) {
           player.play(buffer);
           setMetadata(path);
-          playPauseButton();
+          pausePauseButton();
         });
       }
 
@@ -56,7 +56,7 @@
         player.load(file, function(buffer) {
           player.play(buffer);
           setMetadata(file.name);
-          playPauseButton();
+          pausePauseButton();
         });
       }
 
@@ -103,6 +103,7 @@
         player.load(file, function(buffer) {
           player.play(buffer);
           setMetadata(file.name);
+          pausePauseButton();
         });
       }
 
@@ -117,22 +118,24 @@
         <p>Usage: Drop any module file (.mod, .xm, .it, etc.) on this page and hit play!</p>
       </div>
       <div id="headline" class="banner"><h1>chiptune.js</h1></div>
-      <div id="demosong" class="banner">
-        <a onclick="loadURL('tunes/mysteristerium.mod')" href="#">
-          Load demo song<br>
-          (mysterysterium by maktone)
-        </a>
-      </div>
       <div id="metadata" class="banner">
         <span id="title">nothing loaded</span>
         <span id="artist"></span>
       </div>
+      <div id="controls" class="banner">
+        <a onclick="pauseButton()" id="play" class="control"></a>
+      </div>
       <div id="choosefile" class="banner">
         <input type="file" id="files" name="files" onchange="loadFile(this.files[0])"/>
       </div>
-      <div id="controls" class="banner">
-        <a onclick="pauseButton()" id="pause" class="control"></a>
-      </div>
+      <div id="demos" class="banner"><div>
+        <h2>Demo Songs</h2>
+        <a class="song" onclick="loadURL('tunes/mysteristerium.mod')" href="#">mysterysterium by maktone<span class="size">23kb</span></a>
+        <a class="song" onclick="loadURL('tunes/rfchip001.xm')" href="#">RF chip #001 by Dubmood and Bliss<span class="size">31kb</span></a>
+        <a class="song" onclick="loadURL('tunes/cydonian sky.xm')" href="#">Cydonian Sky by Dubmood<span class="size">31kb</span></a>
+        <a class="song" onclick="loadURL('tunes/chipsounds.mod')" href="#">Chipsounds by 4-Mat<span class="size">18kb</span></a>
+        <!-- <a class="song" onclick="loadURL('tunes/')" href="#"> by </a> -->
+      </div></div>
     </div>
   </body>
 </html>
