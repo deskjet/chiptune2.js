@@ -25,11 +25,28 @@
         }
       }
 
+      function setMetadata(filename) {
+        var metadata = player.metadata();
+        if (metadata['title'] != '') {
+          document.getElementById('title').innerHTML = metadata['title'];
+        }
+        else {
+          document.getElementById('title').innerHTML = filename;
+        }
+
+        if (metadata['artist'] != '') {
+          document.getElementById('artist').innerHTML = '<br />' + metadata['artist'];
+        }
+        else {
+          document.getElementById('artist').innerHTML = '';
+        }
+      }
+
       function loadURL(path) {
         init();
         player.load(path, function(buffer) {
-          document.querySelector(".loadedfile").innerHTML = path;
           player.play(buffer);
+          setMetadata(path);
           playPauseButton();
         });
       }
@@ -37,8 +54,8 @@
       function loadFile(file) {
         init();
         player.load(file, function(buffer) {
-          document.querySelector(".loadedfile").innerHTML = file.name;
           player.play(buffer);
+          setMetadata(file.name);
           playPauseButton();
         });
       }
@@ -77,15 +94,15 @@
         }
       }
 
-      var fileaccess = document.querySelector("*");
+      var fileaccess = document.querySelector('*');
       fileaccess.ondrop = function(e) {
         e.preventDefault();
         var file = e.dataTransfer.files[0];
         init();
 
         player.load(file, function(buffer) {
-          document.querySelector(".loadedfile").innerHTML = file.name;
           player.play(buffer);
+          setMetadata(file.name);
         });
       }
 
@@ -106,14 +123,15 @@
           (mysterysterium by maktone)
         </a>
       </div>
-      <div id="controls" class="banner">
-        <span class="loadedfile">nothing loaded</span><br>
-        <a onclick="pauseButton()" id="pause" class="control"></a>
+      <div id="metadata" class="banner">
+        <span id="title">nothing loaded</span>
+        <span id="artist"></span>
       </div>
       <div id="choosefile" class="banner">
-        <br/>
-        <br /><input type="file" id="files" name="files" onchange="loadFile(this.files[0])"/>
-        <br/>
+        <input type="file" id="files" name="files" onchange="loadFile(this.files[0])"/>
+      </div>
+      <div id="controls" class="banner">
+        <a onclick="pauseButton()" id="pause" class="control"></a>
       </div>
     </div>
   </body>

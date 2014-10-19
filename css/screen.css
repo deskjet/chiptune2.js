@@ -42,7 +42,7 @@ body {
   margin-top: 2.4rem;
 }
 
-#headline, #demosong, #controls, #choosefile {
+#headline, #demosong, #metadata, #controls, #choosefile {
   text-align: center;
 }
 
@@ -74,21 +74,31 @@ body {
 }
 
 #demosong {
-  margin-top: 3.6rem;
+  margin-top: 3rem;
 }
 #demosong a {
   color: #232323;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 
-#controls, #choosefile {
-  margin-top: 1.7rem;
+#metadata {
+  display: block;
+}
+
+#choosefile input {
+  padding: 0.5rem;
+  background: #f7f7f7;
+  border-radius: 0.35rem;
+  border: 1px solid rgba(215, 99, 34, 0.78);
+}
+
+#choosefile, #controls {
+  margin-top: 1.9rem;
 }
 
 .control {
   width: 5rem;
   height: 5rem;
-  margin-top: 1.6rem;
   border-radius: 2.5rem;
   background-color: #505050;
   display: inline-block;
