@@ -8,38 +8,102 @@
     <meta name="viewport" content="width=device-width">
 
     <link rel="stylesheet" href="css/normalize.min.css">
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/screen.css">
 
     <script type="text/javascript" src="js/libopenmpt.js"></script>
     <script type="text/javascript" src="js/chiptune2.js"></script>
     <script type="text/javascript">
       var player;
-      var context = new AudioContext();
 
       function init() {
-        if (player != undefined) {
-          player.stop();
+        if (player == undefined) {
+          player = new ChiptuneJsPlayer(new ChiptuneJsConfig(1));
         }
-        player = new ChiptuneJsPlayer(context, new ChiptuneJsConfig(1));
+        else {
+          player.stop();
+          playPauseButton();
+        }
+      }
+
+      function setMetadata(filename) {
+        var metadata = player.metadata();
+        if (metadata['title'] != '') {
+          document.getElementById('title').innerHTML = metadata['title'];
+        }
+        else {
+          document.getElementById('title').innerHTML = filename;
+        }
+
+        if (metadata['artist'] != '') {
+          document.getElementById('artist').innerHTML = '<br />' + metadata['artist'];
+        }
+        else {
+          document.getElementById('artist').innerHTML = '';
+        }
       }
 
       function loadURL(path) {
         init();
         player.load(path, function(buffer) {
-          document.querySelector(".loadedfile").innerHTML = path;
           player.play(buffer);
+          setMetadata(path);
+          pausePauseButton();
         });
       }
 
-      var fileaccess = document.querySelector("*");
+      function loadFile(file) {
+        init();
+        player.load(file, function(buffer) {
+          player.play(buffer);
+          setMetadata(file.name);
+          pausePauseButton();
+        });
+      }
+
+      function pauseButton() {
+        player.togglePause();
+        switchPauseButton();
+      }
+
+      function switchPauseButton() {
+        var button = document.getElementById('pause')
+        if (button) {
+          button.id = "play_tmp";
+        }
+        button = document.getElementById('play')
+        if (button) {
+          button.id = "pause";
+        }
+        button = document.getElementById('play_tmp')
+        if (button) {
+          button.id = "play";
+        }
+      }
+
+      function playPauseButton() {
+        var button = document.getElementById('pause')
+        if (button) {
+          button.id = "play";
+        }
+      }
+
+      function pausePauseButton() {
+        var button = document.getElementById('play')
+        if (button) {
+          button.id = "pause";
+        }
+      }
+
+      var fileaccess = document.querySelector('*');
       fileaccess.ondrop = function(e) {
         e.preventDefault();
         var file = e.dataTransfer.files[0];
         init();
 
         player.load(file, function(buffer) {
-          document.querySelector(".loadedfile").innerHTML = file.name;
           player.play(buffer);
+          setMetadata(file.name);
+          pausePauseButton();
         });
       }
 
@@ -48,17 +112,30 @@
     </script>
   </head>
   <body>
-    <div id="headphones"></div>
+    <div class="bg bg1"></div>
     <div id="content">
-      <div id="info">
+      <div id="info" class="banner">
         <p>Usage: Drop any module file (.mod, .xm, .it, etc.) on this page and hit play!</p>
       </div>
-      <div id="headline"><span>chiptune.js</span></div>
-      <div id="controls">
-        <span class="loadedfile">nothing loaded</span><br>
-        <a onclick="player.togglePause()" id="pause" class="control"></a>
+      <div id="headline" class="banner"><h1>chiptune.js</h1></div>
+      <div id="metadata" class="banner">
+        <span id="title">nothing loaded</span>
+        <span id="artist"></span>
       </div>
-      <div id="demosong"><a onclick="loadURL('tunes/mysteristerium.mod')" herf="#">Load demo song<br>(mysterysterium by maktone)</a></div>
+      <div id="controls" class="banner">
+        <a onclick="pauseButton()" id="play" class="control"></a>
+      </div>
+      <div id="choosefile" class="banner">
+        <input type="file" id="files" name="files" onchange="loadFile(this.files[0])"/>
+      </div>
+      <div id="demos" class="banner"><div>
+        <h2>Demo Songs</h2>
+        <a class="song" onclick="loadURL('tunes/mysteristerium.mod')" href="#">mysterysterium by maktone<span class="size">23kb</span></a>
+        <a class="song" onclick="loadURL('tunes/rfchip001.xm')" href="#">RF chip #001 by Dubmood and Bliss<span class="size">31kb</span></a>
+        <a class="song" onclick="loadURL('tunes/cydonian sky.xm')" href="#">Cydonian Sky by Dubmood<span class="size">31kb</span></a>
+        <a class="song" onclick="loadURL('tunes/chipsounds.mod')" href="#">Chipsounds by 4-Mat<span class="size">18kb</span></a>
+        <!-- <a class="song" onclick="loadURL('tunes/')" href="#"> by </a> -->
+      </div></div>
     </div>
   </body>
 </html>

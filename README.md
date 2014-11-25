@@ -39,6 +39,13 @@ If it runs successfully two file will be created inside the `bin` directory.
 1. `libopenmpt.js` is the library you want. You can use it with chiptune2.js.
 2. `libopenmpt_test.js` is the libopenmpt test suite. It is meant to run in nodejs.
 
+### Building Stylesheet
+The stylesheet is build with [SASS+Compass](http://compass-style.org/). To build this yourself, follow the Compass [installation instructions](http://compass-style.org/install/), then cd into the chiptune2.js directory and use this command:
+
+    compass watch
+
+The stylesheet .css file with rebuild every time you make a change to the source file in the `sass` folder.
+
 ## License
 
 All code in this project is MIT (X11) licensed. The only exception are the compiled libopenmpt parts which remain under the OpenMPT project BSD license.

@@ -1,0 +1,171 @@
+@font-face {
+  font-family: amiga;
+  src: url("../fonts/amiga4ever_pro2.ttf");
+  font-weight: 400;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ff5c00), color-stop(100%, #ff5a00));
+  background: -webkit-linear-gradient(#ff5c00, #ff5a00);
+  background: -moz-linear-gradient(#ff5c00, #ff5a00);
+  background: -o-linear-gradient(#ff5c00, #ff5a00);
+  background: linear-gradient(#ff5c00, #ff5a00);
+}
+
+.bg {
+  width: 100%;
+  width: calc(100% - 4rem);
+  height: 100%;
+  height: calc(100% - 4rem);
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  z-index: -90;
+}
+.bg.bg1 {
+  background-image: url("../img/headphones.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+.banner {
+  width: 100%;
+  font-family: amiga, sans-serif;
+}
+.banner + .banner {
+  margin-top: 2.4rem;
+}
+
+#headline, #demosong, #metadata, #controls, #choosefile {
+  text-align: center;
+}
+
+#info {
+  max-width: calc(100% - 2.6rem);
+  padding: 1.25rem 1.3rem;
+  background: rgba(20, 20, 20, 0.86);
+  color: #f9f9f9;
+}
+
+#headline {
+  max-width: calc(100% - 2rem);
+  padding: 1.2rem 1rem;
+  background: white;
+  color: #232323;
+}
+#headline h1 {
+  margin: 0;
+}
+@media only screen and (max-width: 45rem) {
+  #headline h1 {
+    font-size: 3rem;
+  }
+}
+@media only screen and (min-width: 45rem) {
+  #headline h1 {
+    font-size: 4.5rem;
+  }
+}
+
+#demosong {
+  margin-top: 3rem;
+}
+#demosong a {
+  color: #232323;
+  font-size: 0.7rem;
+}
+
+#metadata {
+  display: block;
+}
+
+#choosefile input {
+  padding: 0.5rem;
+  background: #f7f7f7;
+  border-radius: 0.35rem;
+  border: 1px solid rgba(215, 99, 34, 0.78);
+}
+
+#choosefile, #controls {
+  margin-top: 1.9rem;
+}
+
+#demos {
+  text-align: center;
+}
+#demos > div {
+  display: inline-block;
+  margin: 0 auto;
+  text-align: left;
+  border-radius: 0.35rem;
+  border: 1px solid rgba(215, 99, 34, 0.78);
+  padding: 1rem;
+  background: white;
+}
+#demos > div h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.3rem;
+}
+#demos > div .song {
+  display: block;
+  text-decoration: none;
+  color: #4c4cbd;
+}
+#demos > div .song + .song {
+  margin-top: 0.65rem;
+}
+#demos > div .song .size {
+  vertical-align: super;
+  font-size: 0.6rem;
+  margin-left: 0.3rem;
+}
+#demos > div .song .size:before {
+  content: "(";
+}
+#demos > div .song .size:after {
+  content: ")";
+}
+
+.control {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 2.5rem;
+  background-color: #505050;
+  display: inline-block;
+  box-shadow: 0px 9px 0px #323232, 0px 9px 25px rgba(0, 0, 0, 0.7);
+  transition: all 0.1s ease;
+  cursor: pointer;
+}
+.control:active, .control.pressed {
+  box-shadow: 0px 3px 0px #323232, 0px 3px 6px rgba(0, 0, 0, 0.7);
+}
+.control#play {
+  background-image: url("../img/play.svg");
+  background-size: 75%;
+  background-position: 16px 9px;
+  background-repeat: no-repeat;
+}
+.control#pause {
+  background-image: url("../img/pause.svg");
+  background-size: 75%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.control#loop {
+  display: none;
+}
+.control#loop + label {
+  background-image: url("../img/loop.svg");
+  background-size: 75%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.control#loop:checked + label {
+  box-shadow: 0px 3px 0px #323232, 0px 3px 6px rgba(0, 0, 0, 0.7);
+}
