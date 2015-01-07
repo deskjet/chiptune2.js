@@ -1,42 +1,42 @@
-function ChiptuneJsConfig(context, samplesPerBuffer, bufferLength, repeatCount) {
-  this.context = context;
-  this.samplesPerBuffer = samplesPerBuffer;
-  this.bufferLength = bufferLength;
+// audio context
+ChiptuneAudioContext = AudioContext || webkitAudioContext;
+
+// config
+function ChiptuneJsConfig(repeatCount) {
   this.repeatCount = repeatCount;
 }
 
+// player
 function ChiptuneJsPlayer(config) {
+  this.context = new ChiptuneAudioContext;
   this.config = config;
-  this.modulePtr;
-  this.bufferFinishTime;
-  this.leftBufferPtr = Module._malloc(4 * this.config.samplesPerBuffer);
-  this.rightBufferPtr = Module._malloc(4 * this.config.samplesPerBuffer);
-  this.pause = false;
-  this.scheduledAudio = [];
-  this._onended = function() {
-    this.scheduledAudio.shift();
-  }.bind(this);
+  this.currentPlayingNode = null;
 }
 
-ChiptuneJsPlayer.prototype._cleanup = function() {
-  Module._free(this.leftBufferPtr);
-  Module._free(this.rightBufferPtr);
-  Module._openmpt_module_destroy(this.modulePtr);
+// metadata
+ChiptuneJsPlayer.prototype.duration = function() {
+  return Module._openmpt_module_get_duration_seconds(this.currentPlayingNode.modulePtr);
 }
 
-ChiptuneJsPlayer.prototype._loadArrayBuffer = function(buffer) {
-  var byteArray = new Int8Array(buffer);
-  var ptrToFile = Module._malloc(byteArray.byteLength);
-  Module.HEAPU8.set(byteArray, ptrToFile);
-  return Module._openmpt_module_create_from_memory(ptrToFile, byteArray.byteLength, 0, 0, 0);
+ChiptuneJsPlayer.prototype.metadata = function() {
+  var data = {};
+  var keys = Module.Pointer_stringify(Module._openmpt_module_get_metadata_keys(this.currentPlayingNode.modulePtr)).split(';');;
+  var keyNameBuffer = 0;
+  for (i = 0; i < keys.length; i++) {
+    keyNameBuffer = Module._malloc(keys[i].length + 1);
+    Module.writeStringToMemory(keys[i], keyNameBuffer);
+    data[keys[i]] = Module.Pointer_stringify(Module._openmpt_module_get_metadata(player.currentPlayingNode.modulePtr, keyNameBuffer));
+    Module._free(keyNameBuffer);
+  }
+  return data;
 }
 
+// playing, etc
 ChiptuneJsPlayer.prototype.load = function(input, callback) {
   if (input instanceof File) {
     var reader = new FileReader();
     reader.onload = function() {
-      this.modulePtr = this._loadArrayBuffer(reader.result);
-      return callback(false); // no error
+      return callback(reader.result); // no error
     }.bind(this);
     reader.readAsArrayBuffer(input);
   } else {
@@ -45,98 +45,123 @@ ChiptuneJsPlayer.prototype.load = function(input, callback) {
     xhr.responseType = 'arraybuffer';
     xhr.onload = function(error) {
       // TODO error checking
-      this.modulePtr = this._loadArrayBuffer(xhr.response);
-      return callback(false); // no error
+      return callback(xhr.response); // no error
     }.bind(this);
-
     xhr.send();
   }
 }
 
-ChiptuneJsPlayer.prototype.play = function() {
-  if (this.pause === true) {
-    var pauseTime = this.config.context.currentTime;
-    this.scheduledAudio.forEach(function(source) {
-      source.onended = undefined;
-      source.pauseTime = pauseTime;
-      source.stop();
-    });
+ChiptuneJsPlayer.prototype.play = function(buffer) {
+  var processNode = this.createLibopenmptNode(buffer, this.config);
+  if (processNode == null) {
     return;
   }
-
-  // init
-  if (this.bufferFinishTime === undefined) {
-    this.bufferFinishTime = this.config.context.currentTime;
-  }
-
-  // this is how long the buffer will last in miliseconds
-  var bufferRestTime = (this.bufferFinishTime - this.config.context.currentTime) * 1000;
-  if (bufferRestTime > this.config.bufferLength) {
-    // buffer is longer than needed -> wait
-    setTimeout(this.play.bind(this), bufferRestTime - 2*this.config.bufferLength);
-    return;
-  }
-  
-  // read samples from lib
-  var sampleCount = Module._openmpt_module_read_float_stereo(this.modulePtr, 44100, this.config.samplesPerBuffer, this.leftBufferPtr, this.rightBufferPtr);
-
-  // no new samples -> this module is done
-  if (sampleCount === 0) return this._cleanup();
-
-  // convert lib output to Float32Array to AudioBuffer
-  var rawAudioLeft = Module.HEAPF32.subarray(this.leftBufferPtr / 4, this.leftBufferPtr / 4 + sampleCount)
-  var rawAudioRight = Module.HEAPF32.subarray(this.rightBufferPtr / 4, this.rightBufferPtr / 4 + sampleCount)
-  var audioBuffer = this.config.context.createBuffer(2, rawAudioLeft.length, 44100);
-  audioBuffer.getChannelData(0).set(rawAudioLeft);
-  audioBuffer.getChannelData(1).set(rawAudioRight);
-
-  // make an AudioSource
-  var source = this.config.context.createBufferSource();
-  source.buffer = audioBuffer;
-  source.connect(this.config.context.destination);
-  source.onended = this._onended;
-
-  // schdule it at end of buffer
-  source.start(this.bufferFinishTime);
-  this.bufferFinishTime += source.buffer.duration;
-  source.playFinishTime = this.bufferFinishTime; // we should save this somewhere else
-
-  // save it for pauseing
-  this.scheduledAudio.push(source);
-
-  //setTimeout(this.play.bind(this), 0);
-  this.play.bind(this)();
-}
-
-ChiptuneJsPlayer.prototype.togglePause = function() {
-    this.pause = !this.pause;
-    if (this.pause === false) {
-      this.bufferFinishTime = this.config.context.currentTime;
-      var newScheduledAudio = [];
-      this.scheduledAudio.forEach(function(source, i) {
-        var offset = 0;
-        if (i == 0 && source.playFinishTime > source.pauseTime) {
-          offset = source.playFinishTime - source.pauseTime;
-        }
-        var newSource = this.config.context.createBufferSource();
-        newSource.buffer = source.buffer;
-        newSource.connect(this.config.context.destination);
-        newSource.onended = function() {
-          newScheduledAudio.shift();
-        }.bind(this);
-        newSource.start(this.bufferFinishTime, offset);
-        this.bufferFinishTime += newSource.buffer.duration;
-        newSource.playFinishTime = this.bufferFinishTime;
-        newScheduledAudio.push(newSource);
-      }.bind(this));
-      this.scheduledAudio = newScheduledAudio;
-      this.play();
-    }
+  this.stop();
+  this.currentPlayingNode = processNode;
+  processNode.connect(this.context.destination);
 }
 
 ChiptuneJsPlayer.prototype.stop = function() {
-  if (!this.pause) {
-    this.togglePause()
+  if (this.currentPlayingNode != null) {
+    this.currentPlayingNode.disconnect();
+    this.currentPlayingNode.cleanup();
+    this.currentPlayingNode = null;
   }
-  this._cleanup();
 }
+
+ChiptuneJsPlayer.prototype.togglePause = function() {
+	if (this.currentPlayingNode != null) {
+    this.currentPlayingNode.togglePause();
+  }
+}
+
+ChiptuneJsPlayer.prototype.createLibopenmptNode = function(buffer, config) {
+  // TODO error checking in this whole function
+
+  var maxFramesPerChunk = 4096;
+  var processNode = this.context.createScriptProcessor(0, 0, 2);
+  processNode.config = config;
+  processNode.player = this;
+  var byteArray = new Int8Array(buffer);
+  var ptrToFile = Module._malloc(byteArray.byteLength);
+  Module.HEAPU8.set(byteArray, ptrToFile);
+  processNode.modulePtr = Module._openmpt_module_create_from_memory(ptrToFile, byteArray.byteLength, 0, 0, 0);
+  processNode.paused = false;
+  processNode.leftBufferPtr  = Module._malloc(4 * maxFramesPerChunk);
+  processNode.rightBufferPtr = Module._malloc(4 * maxFramesPerChunk);
+  processNode.cleanup = function() {
+    if (this.modulePtr != 0) {
+      Module._openmpt_module_destroy(this.modulePtr);
+      this.modulePtr = 0;
+    }
+    if (this.leftBufferPtr != 0) {
+      Module._free(this.leftBufferPtr);
+      this.leftBufferPtr = 0;
+    }
+    if (this.rightBufferPtr != 0) {
+      Module._free(this.rightBufferPtr);
+      this.rightBufferPtr = 0;
+    }
+  }
+  processNode.stop = function() {
+    this.disconnect();
+    this.cleanup();
+  }
+  processNode.pause = function() {
+    this.paused = true;
+  }
+  processNode.unpause = function() {
+    this.paused = false;
+  }
+  processNode.togglePause = function() {
+    this.paused = !this.paused;
+  }
+  processNode.onaudioprocess = function(e) {
+    var outputL = e.outputBuffer.getChannelData(0);
+    var outputR = e.outputBuffer.getChannelData(1);
+    var framesToRender = outputL.length;
+    if (this.ModulePtr == 0) {
+      for (var i = 0; i < framesToRender; ++i) {
+        outputL[i] = 0;
+        outputR[i] = 0;
+      }
+      this.disconnect();
+      this.cleanup();
+      return;
+    }
+    if (this.paused) {
+      for (var i = 0; i < framesToRender; ++i) {
+        outputL[i] = 0;
+        outputR[i] = 0;
+      }
+      return;
+    }
+    var framesRendered = 0;
+    var ended = false;
+    while (framesToRender > 0) {
+      var framesPerChunk = Math.min(framesToRender, maxFramesPerChunk);
+      var actualFramesPerChunk = Module._openmpt_module_read_float_stereo(this.modulePtr, this.context.sampleRate, framesPerChunk, this.leftBufferPtr, this.rightBufferPtr);
+      if (actualFramesPerChunk == 0) {
+        ended = true;
+      }
+      var rawAudioLeft = Module.HEAPF32.subarray(this.leftBufferPtr / 4, this.leftBufferPtr / 4 + actualFramesPerChunk);
+      var rawAudioRight = Module.HEAPF32.subarray(this.rightBufferPtr / 4, this.rightBufferPtr / 4 + actualFramesPerChunk);
+      for (var i = 0; i < actualFramesPerChunk; ++i) {
+        outputL[framesRendered + i] = rawAudioLeft[i];
+        outputR[framesRendered + i] = rawAudioRight[i];
+      }
+      for (var i = actualFramesPerChunk; i < framesPerChunk; ++i) {
+        outputL[framesRendered + i] = 0;
+        outputR[framesRendered + i] = 0;
+      }
+      framesToRender -= framesPerChunk;
+      framesRendered += framesPerChunk;
+    }
+    if (ended) {
+      this.disconnect();
+      this.cleanup();
+    }
+  }
+  return processNode;
+}
+
