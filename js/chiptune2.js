@@ -11,6 +11,31 @@ function ChiptuneJsPlayer(config) {
   this.context = new ChiptuneAudioContext;
   this.config = config;
   this.currentPlayingNode = null;
+  this.handlers = [];
+}
+
+// event handlers section
+ChiptuneJsPlayer.prototype.fireEvent = function (eventName, response) {
+  var  handlers = this.handlers;
+  if (handlers.length) {
+    handlers.forEach(function (handler) {
+      if (handler.eventName === eventName) {
+        handler.handler(response);
+      }
+    })
+  }
+}
+
+ChiptuneJsPlayer.prototype.addHandler = function (eventName, handler) {
+  this.handlers.push({eventName: eventName, handler: handler});
+}
+
+ChiptuneJsPlayer.prototype.onEnded = function (handler) {
+  this.addHandler('onEnded', handler);
+}
+
+ChiptuneJsPlayer.prototype.onError = function (handler) {
+  this.addHandler('onError', handler);
 }
 
 // metadata
@@ -20,9 +45,9 @@ ChiptuneJsPlayer.prototype.duration = function() {
 
 ChiptuneJsPlayer.prototype.metadata = function() {
   var data = {};
-  var keys = Module.Pointer_stringify(Module._openmpt_module_get_metadata_keys(this.currentPlayingNode.modulePtr)).split(';');;
+  var keys = Module.Pointer_stringify(Module._openmpt_module_get_metadata_keys(this.currentPlayingNode.modulePtr)).split(';');
   var keyNameBuffer = 0;
-  for (i = 0; i < keys.length; i++) {
+  for (var i = 0; i < keys.length; i++) {
     keyNameBuffer = Module._malloc(keys[i].length + 1);
     Module.writeStringToMemory(keys[i], keyNameBuffer);
     data[keys[i]] = Module.Pointer_stringify(Module._openmpt_module_get_metadata(player.currentPlayingNode.modulePtr, keyNameBuffer));
@@ -33,6 +58,7 @@ ChiptuneJsPlayer.prototype.metadata = function() {
 
 // playing, etc
 ChiptuneJsPlayer.prototype.load = function(input, callback) {
+  var player = this;
   if (input instanceof File) {
     var reader = new FileReader();
     reader.onload = function() {
@@ -43,10 +69,19 @@ ChiptuneJsPlayer.prototype.load = function(input, callback) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', input, true);
     xhr.responseType = 'arraybuffer';
-    xhr.onload = function(error) {
-      // TODO error checking
-      return callback(xhr.response); // no error
+    xhr.onload = function(e) {
+      if (xhr.status === 200 && e.total) {
+        return callback(xhr.response); // no error
+      } else {
+        player.fireEvent('onError', {type: 'onxhr'});
+      }
     }.bind(this);
+    xhr.onerror = function() {
+      player.fireEvent('onError', {type: 'onxhr'});
+    };
+    xhr.onabort = function() {
+      player.fireEvent('onError', {type: 'onxhr'});
+    };
     xhr.send();
   }
 }
@@ -66,6 +101,7 @@ ChiptuneJsPlayer.prototype.stop = function() {
     this.currentPlayingNode.disconnect();
     this.currentPlayingNode.cleanup();
     this.currentPlayingNode = null;
+    this.fireEvent('onStop');
   }
 }
 
@@ -160,6 +196,7 @@ ChiptuneJsPlayer.prototype.createLibopenmptNode = function(buffer, config) {
     if (ended) {
       this.disconnect();
       this.cleanup();
+      processNode.player.fireEvent('onEnded');
     }
   }
   return processNode;
