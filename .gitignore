@@ -55,3 +55,6 @@ Temporary Items
 ### Sass ###
 .sass-cache
 *.css.map
+
+# Webstorm IDE
+.idea
