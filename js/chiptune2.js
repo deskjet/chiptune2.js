@@ -101,7 +101,6 @@ ChiptuneJsPlayer.prototype.stop = function() {
     this.currentPlayingNode.disconnect();
     this.currentPlayingNode.cleanup();
     this.currentPlayingNode = null;
-    this.fireEvent('onStop');
   }
 }
 
