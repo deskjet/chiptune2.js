@@ -51,6 +51,7 @@ These people helped making this project better:
 - [manx](https://github.com/manxorist)
 - [nyov](https://github.com/nyov)
 - [DanialOaks](https://github.com/DanielOaks)
+- [onikienko](https://github.com/onikienko)
 
 Thank You!
 
