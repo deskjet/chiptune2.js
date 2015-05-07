@@ -173,11 +173,14 @@ ChiptuneJsPlayer.prototype.createLibopenmptNode = function(buffer, config) {
     }
     var framesRendered = 0;
     var ended = false;
+    var error = false;
     while (framesToRender > 0) {
       var framesPerChunk = Math.min(framesToRender, maxFramesPerChunk);
       var actualFramesPerChunk = Module._openmpt_module_read_float_stereo(this.modulePtr, this.context.sampleRate, framesPerChunk, this.leftBufferPtr, this.rightBufferPtr);
       if (actualFramesPerChunk == 0) {
         ended = true;
+        // modulePtr will be 0 on openmpt: error: openmpt_module_read_float_stereo: ERROR: module * not valid or other openmpt error
+        error = !this.modulePtr;
       }
       var rawAudioLeft = Module.HEAPF32.subarray(this.leftBufferPtr / 4, this.leftBufferPtr / 4 + actualFramesPerChunk);
       var rawAudioRight = Module.HEAPF32.subarray(this.rightBufferPtr / 4, this.rightBufferPtr / 4 + actualFramesPerChunk);
@@ -195,7 +198,7 @@ ChiptuneJsPlayer.prototype.createLibopenmptNode = function(buffer, config) {
     if (ended) {
       this.disconnect();
       this.cleanup();
-      processNode.player.fireEvent('onEnded');
+      error ? processNode.player.fireEvent('onError', {type: 'openmpt'}) : processNode.player.fireEvent('onEnded');
     }
   }
   return processNode;
