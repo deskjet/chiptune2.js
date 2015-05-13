@@ -87,11 +87,11 @@ ChiptuneJsPlayer.prototype.load = function(input, callback) {
 }
 
 ChiptuneJsPlayer.prototype.play = function(buffer) {
+  this.stop();
   var processNode = this.createLibopenmptNode(buffer, this.config);
   if (processNode == null) {
     return;
   }
-  this.stop();
   this.currentPlayingNode = processNode;
   processNode.connect(this.context.destination);
 }
