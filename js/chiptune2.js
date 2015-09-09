@@ -11,6 +11,31 @@ function ChiptuneJsPlayer(config) {
   this.context = new ChiptuneAudioContext;
   this.config = config;
   this.currentPlayingNode = null;
+  this.handlers = [];
+}
+
+// event handlers section
+ChiptuneJsPlayer.prototype.fireEvent = function (eventName, response) {
+  var  handlers = this.handlers;
+  if (handlers.length) {
+    handlers.forEach(function (handler) {
+      if (handler.eventName === eventName) {
+        handler.handler(response);
+      }
+    })
+  }
+}
+
+ChiptuneJsPlayer.prototype.addHandler = function (eventName, handler) {
+  this.handlers.push({eventName: eventName, handler: handler});
+}
+
+ChiptuneJsPlayer.prototype.onEnded = function (handler) {
+  this.addHandler('onEnded', handler);
+}
+
+ChiptuneJsPlayer.prototype.onError = function (handler) {
+  this.addHandler('onError', handler);
 }
 
 // metadata
@@ -20,9 +45,9 @@ ChiptuneJsPlayer.prototype.duration = function() {
 
 ChiptuneJsPlayer.prototype.metadata = function() {
   var data = {};
-  var keys = Module.Pointer_stringify(Module._openmpt_module_get_metadata_keys(this.currentPlayingNode.modulePtr)).split(';');;
+  var keys = Module.Pointer_stringify(Module._openmpt_module_get_metadata_keys(this.currentPlayingNode.modulePtr)).split(';');
   var keyNameBuffer = 0;
-  for (i = 0; i < keys.length; i++) {
+  for (var i = 0; i < keys.length; i++) {
     keyNameBuffer = Module._malloc(keys[i].length + 1);
     Module.writeStringToMemory(keys[i], keyNameBuffer);
     data[keys[i]] = Module.Pointer_stringify(Module._openmpt_module_get_metadata(player.currentPlayingNode.modulePtr, keyNameBuffer));
@@ -33,6 +58,7 @@ ChiptuneJsPlayer.prototype.metadata = function() {
 
 // playing, etc
 ChiptuneJsPlayer.prototype.load = function(input, callback) {
+  var player = this;
   if (input instanceof File) {
     var reader = new FileReader();
     reader.onload = function() {
@@ -43,20 +69,33 @@ ChiptuneJsPlayer.prototype.load = function(input, callback) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', input, true);
     xhr.responseType = 'arraybuffer';
-    xhr.onload = function(error) {
-      // TODO error checking
-      return callback(xhr.response); // no error
+    xhr.onload = function(e) {
+      if (xhr.status === 200 && e.total) {
+        return callback(xhr.response); // no error
+      } else {
+        player.fireEvent('onError', {type: 'onxhr'});
+      }
     }.bind(this);
+    xhr.onerror = function() {
+      player.fireEvent('onError', {type: 'onxhr'});
+    };
+    xhr.onabort = function() {
+      player.fireEvent('onError', {type: 'onxhr'});
+    };
     xhr.send();
   }
 }
 
 ChiptuneJsPlayer.prototype.play = function(buffer) {
+  this.stop();
   var processNode = this.createLibopenmptNode(buffer, this.config);
   if (processNode == null) {
     return;
   }
-  this.stop();
+
+  // set config options on module
+  Module._openmpt_module_set_repeat_count(processNode.modulePtr, this.config.repeatCount);
+
   this.currentPlayingNode = processNode;
   processNode.connect(this.context.destination);
 }
@@ -138,11 +177,14 @@ ChiptuneJsPlayer.prototype.createLibopenmptNode = function(buffer, config) {
     }
     var framesRendered = 0;
     var ended = false;
+    var error = false;
     while (framesToRender > 0) {
       var framesPerChunk = Math.min(framesToRender, maxFramesPerChunk);
       var actualFramesPerChunk = Module._openmpt_module_read_float_stereo(this.modulePtr, this.context.sampleRate, framesPerChunk, this.leftBufferPtr, this.rightBufferPtr);
       if (actualFramesPerChunk == 0) {
         ended = true;
+        // modulePtr will be 0 on openmpt: error: openmpt_module_read_float_stereo: ERROR: module * not valid or other openmpt error
+        error = !this.modulePtr;
       }
       var rawAudioLeft = Module.HEAPF32.subarray(this.leftBufferPtr / 4, this.leftBufferPtr / 4 + actualFramesPerChunk);
       var rawAudioRight = Module.HEAPF32.subarray(this.rightBufferPtr / 4, this.rightBufferPtr / 4 + actualFramesPerChunk);
@@ -160,6 +202,7 @@ ChiptuneJsPlayer.prototype.createLibopenmptNode = function(buffer, config) {
     if (ended) {
       this.disconnect();
       this.cleanup();
+      error ? processNode.player.fireEvent('onError', {type: 'openmpt'}) : processNode.player.fireEvent('onEnded');
     }
   }
   return processNode;
