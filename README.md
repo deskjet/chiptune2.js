@@ -13,10 +13,10 @@ This is a javascript library that can play module music files. It is based on th
 * Play local (HTML5) and remote files (XHR)
 * Stereo playback
 * Module metadata
+* Looping mode
  
 ## To do
 
-* Looping mode
 * Playback information (e.g. position, speed, bpm)
 * Mixer settings (e.g. sampling rate, resolution)
 * Seekbar support
