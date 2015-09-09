@@ -92,6 +92,10 @@ ChiptuneJsPlayer.prototype.play = function(buffer) {
   if (processNode == null) {
     return;
   }
+
+  // set config options on module
+  Module._openmpt_module_set_repeat_count(processNode.modulePtr, this.config.repeatCount);
+
   this.currentPlayingNode = processNode;
   processNode.connect(this.context.destination);
 }
