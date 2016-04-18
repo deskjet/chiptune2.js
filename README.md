@@ -46,12 +46,13 @@ The stylesheet is build with [SASS+Compass](http://compass-style.org/). To build
 
 The stylesheet .css file with rebuild every time you make a change to the source file in the `sass` folder.
 
-## Contributions
+## Contributers
 These people helped making this project better:
 - [manx](https://github.com/manxorist)
 - [nyov](https://github.com/nyov)
 - [DanialOaks](https://github.com/DanielOaks)
 - [onikienko](https://github.com/onikienko)
+- [okaybenji](https://github.com/okaybenji)
 
 Thank You!
 
