@@ -3,6 +3,7 @@
 
 This is a javascript library that can play module music files. It is based on the [libopenmpt](http://lib.openmpt.org/libopenmpt) C/C++ library. To translate libopenmpt into Javascript [emscripten](https://github.com/kripken/emscripten) was used. For audio output inside the browser WebAudio API ist used.
 
+**Please note**: The compiled `libopenmpt.js` in this repository may not be compiled from latest version of libopenmpt. It may lack bugfixes or other improvements from newer versions. To recompile `libopenmpt.js` using the latest release of libopenmpt follow the instructions in the "Development" section.
 
 ## Features
 
@@ -28,16 +29,19 @@ See it in action [here](http://deskjet.github.io/chiptune2.js/).
 Just drop a module (e.g. from [modarchive.org](http://modarchive.org)) on the demo page and enjoy.
 
 ## Development
-To compile libopenmpt to javascript you need a recent version of [emscripten](https://github.com/kripken/emscripten). Take a look at thier wiki for building instructions. Make sure you have it setup correctly and `emcc` is in your PATH.  
-With emscripten ready you should get a copy of libopenmpt. Go to [thier website](http://lib.openmpt.org/libopenmpt/), download the latest snapshot and extract it.  
-Now you're ready to build. Use this command:
+Download the latest [emscripten](https://emscripten.org) SDK. Follow the instructions for your OS. Make sure `emcc` and `em++` commands are available in the PATH.  
+Next download and extract the libopenmpt source code (unix like) from http://lib.openmpt.org/libopenmpt/.  
+Use this command inside the libopenmpt source folder to build:
 
     make CONFIG=emscripten
 
-If it runs successfully two file will be created inside the `bin` directory.  
+If it compiles successfully these files (and a few more) will be created in the `bin` directory:
 
-1. `libopenmpt.js` is the library you want. You can use it with chiptune2.js.
-2. `libopenmpt_test.js` is the libopenmpt test suite. It is meant to run in nodejs.
+1. `libopenmpt.js` is libopenmpt comiled to JavaScript.
+2. `libopenmpt.js.mem` is the memory initialization file `libopenmpt.js` will download/require it when loaded.
+3. `libopenmpt_test.js` (and `libopenmpt_test.j.mem`) is the libopenmpt test suite and can be run in NodeJS.
+
+Only the first two files are needed for chiptune2.js.
 
 ### Building Stylesheet
 The stylesheet is build with [SASS+Compass](http://compass-style.org/). To build this yourself, follow the Compass [installation instructions](http://compass-style.org/install/), then cd into the chiptune2.js directory and use this command:
