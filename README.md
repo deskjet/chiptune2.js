@@ -1,4 +1,4 @@
-#Chiptune.js
+# Chiptune.js
 #### Version 2
 
 This is a javascript library that can play module music files. It is based on the [libopenmpt](http://lib.openmpt.org/libopenmpt) C/C++ library. To translate libopenmpt into Javascript [emscripten](https://github.com/kripken/emscripten) was used. For audio output inside the browser WebAudio API ist used.
