@@ -3,7 +3,8 @@
 
 This is a javascript library that can play module music files. It is based on the [libopenmpt](http://lib.openmpt.org/libopenmpt) C/C++ library. To translate libopenmpt into Javascript [emscripten](https://github.com/kripken/emscripten) was used. For audio output inside the browser WebAudio API ist used.
 
-**Please note**: The compiled `libopenmpt.js` in this repository might not be compiled from latest version of libopenmpt. It may lack bugfixes or other improvements from newer versions. To recompile `libopenmpt.js` using the latest release of libopenmpt follow the instructions in the "Development" section.
+**Please note**: The compiled `libopenmpt.js` in this repository is based on an outdated version of libopenmpt. Newer versions contain bugfixes and other improvements. Download the latest version from the libopenmpt developers [here](https://builds.openmpt.org/builds/auto/libopenmpt/bin.js/0.3.0-pre.4/) and replace 'libopenmpt.js.mem' and 'libopenmpt.js'.  
+If you prefer to compile `libopenmpt.js` yourself (to save space or make custom changes) follow the instructions in the "Development" section.
 
 ## Features
 
