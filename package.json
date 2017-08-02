@@ -1,0 +1,19 @@
+{
+  "name": "chiptune2",
+  "version": "1.0.0",
+  "description": "much like chiptune.js - but newer and neater",
+  "main": "js/libopenmpt.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deskjet/chiptune2.js.git"
+  },
+  "author": "deskjet",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/deskjet/chiptune2.js/issues"
+  },
+  "homepage": "https://github.com/deskjet/chiptune2.js#readme"
+}
