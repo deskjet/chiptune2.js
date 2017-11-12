@@ -57,7 +57,7 @@ ChiptuneJsPlayer.prototype.metadata = function() {
   for (var i = 0; i < keys.length; i++) {
     keyNameBuffer = Module._malloc(keys[i].length + 1);
     Module.writeStringToMemory(keys[i], keyNameBuffer);
-    data[keys[i]] = Module.Pointer_stringify(Module._openmpt_module_get_metadata(player.currentPlayingNode.modulePtr, keyNameBuffer));
+    data[keys[i]] = Module.Pointer_stringify(Module._openmpt_module_get_metadata(this.currentPlayingNode.modulePtr, keyNameBuffer));
     Module._free(keyNameBuffer);
   }
   return data;
