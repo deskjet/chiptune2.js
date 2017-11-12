@@ -51,15 +51,16 @@ The stylesheet is build with [SASS+Compass](http://compass-style.org/). To build
 
 The stylesheet .css file with rebuild every time you make a change to the source file in the `sass` folder.
 
-## Contributers
-These people helped making this project better:
+## Contributers (in order of appearance)
+- [deskjet](https://github.com/deskjet)
 - [manx](https://github.com/manxorist)
 - [nyov](https://github.com/nyov)
 - [DanialOaks](https://github.com/DanielOaks)
 - [onikienko](https://github.com/onikienko)
 - [okaybenji](https://github.com/okaybenji)
+- [photonstorm](https://github.com/photonstorm)
 
-Thank You!
+Thanks to everyone!
 
 ## License
 
@@ -67,7 +68,7 @@ All code in this project is MIT (X11) licensed. The only exception are the compi
 
 License text below:
 
->Copyright © 2013-2014 Simon Gündling.
+>Copyright © 2013-2017 The chiptune2.js contributers.
 >
 >Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 >
