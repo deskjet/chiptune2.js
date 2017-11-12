@@ -10,106 +10,121 @@
     <link rel="stylesheet" href="css/normalize.min.css">
     <link rel="stylesheet" href="css/screen.css">
 
-    <script type="text/javascript" src="js/libopenmpt.js"></script>
-    <script type="text/javascript" src="js/chiptune2.js"></script>
     <script type="text/javascript">
-      var player;
+      window['Module'] = {};
+      Module.locateFile = function(filename) {
+        return "http://cdn.rawgit.com/deskjet/chiptune2.js/master/" + filename;
+      };
+      Module.onRuntimeInitialized = function() {
+        var player;
 
-      function init() {
-        if (player == undefined) {
-          player = new ChiptuneJsPlayer(new ChiptuneJsConfig(-1));
-        }
-        else {
-          player.stop();
-          playPauseButton();
-        }
-      }
-
-      function setMetadata(filename) {
-        var metadata = player.metadata();
-        if (metadata['title'] != '') {
-          document.getElementById('title').innerHTML = metadata['title'];
-        }
-        else {
-          document.getElementById('title').innerHTML = filename;
+        function init() {
+          if (player == undefined) {
+            player = new ChiptuneJsPlayer(new ChiptuneJsConfig(-1));
+          }
+          else {
+            player.stop();
+            playPauseButton();
+          }
         }
 
-        if (metadata['artist'] != '') {
-          document.getElementById('artist').innerHTML = '<br />' + metadata['artist'];
-        }
-        else {
-          document.getElementById('artist').innerHTML = '';
-        }
-      }
+        function setMetadata(filename) {
+          var metadata = player.metadata();
+          if (metadata['title'] != '') {
+            document.getElementById('title').innerHTML = metadata['title'];
+          }
+          else {
+            document.getElementById('title').innerHTML = filename;
+          }
 
-      function loadURL(path) {
-        init();
-        player.load(path, function(buffer) {
-          player.play(buffer);
-          setMetadata(path);
-          pausePauseButton();
+          if (metadata['artist'] != '') {
+            document.getElementById('artist').innerHTML = '<br />' + metadata['artist'];
+          }
+          else {
+            document.getElementById('artist').innerHTML = '';
+          }
+        }
+
+        function loadURL(path) {
+          init();
+          player.load(path, function(buffer) {
+            player.play(buffer);
+            setMetadata(path);
+            pausePauseButton();
+          });
+        }
+
+        function loadFile(file) {
+          init();
+          player.load(file, function(buffer) {
+            player.play(buffer);
+            setMetadata(file.name);
+            pausePauseButton();
+          });
+        }
+
+        function pauseButton() {
+          player.togglePause();
+          switchPauseButton();
+        }
+
+        function switchPauseButton() {
+          var button = document.getElementById('pause')
+          if (button) {
+            button.id = "play_tmp";
+          }
+          button = document.getElementById('play')
+          if (button) {
+            button.id = "pause";
+          }
+          button = document.getElementById('play_tmp')
+          if (button) {
+            button.id = "play";
+          }
+        }
+
+        function playPauseButton() {
+          var button = document.getElementById('pause')
+          if (button) {
+            button.id = "play";
+          }
+        }
+
+        function pausePauseButton() {
+          var button = document.getElementById('play')
+          if (button) {
+            button.id = "pause";
+          }
+        }
+
+        var fileaccess = document.querySelector('*');
+        fileaccess.ondrop = function(e) {
+          e.preventDefault();
+          var file = e.dataTransfer.files[0];
+          init();
+
+          player.load(file, function(buffer) {
+            player.play(buffer);
+            setMetadata(file.name);
+            pausePauseButton();
+          });
+        }
+
+        fileaccess.ondragenter = function(e){e.preventDefault();}
+        fileaccess.ondragover = function(e){e.preventDefault();}
+
+        document.querySelectorAll('.song').forEach(function (e) {
+          e.addEventListener('click', function(evt) {
+            modurl = evt.target.getAttribute("data-modurl");
+            loadURL(modurl);
+          }, false);
         });
-      }
 
-      function loadFile(file) {
-        init();
-        player.load(file, function(buffer) {
-          player.play(buffer);
-          setMetadata(file.name);
-          pausePauseButton();
-        });
-      }
-
-      function pauseButton() {
-        player.togglePause();
-        switchPauseButton();
-      }
-
-      function switchPauseButton() {
-        var button = document.getElementById('pause')
-        if (button) {
-          button.id = "play_tmp";
-        }
-        button = document.getElementById('play')
-        if (button) {
-          button.id = "pause";
-        }
-        button = document.getElementById('play_tmp')
-        if (button) {
-          button.id = "play";
-        }
-      }
-
-      function playPauseButton() {
-        var button = document.getElementById('pause')
-        if (button) {
-          button.id = "play";
-        }
-      }
-
-      function pausePauseButton() {
-        var button = document.getElementById('play')
-        if (button) {
-          button.id = "pause";
-        }
-      }
-
-      var fileaccess = document.querySelector('*');
-      fileaccess.ondrop = function(e) {
-        e.preventDefault();
-        var file = e.dataTransfer.files[0];
-        init();
-
-        player.load(file, function(buffer) {
-          player.play(buffer);
-          setMetadata(file.name);
-          pausePauseButton();
-        });
-      }
-
-      fileaccess.ondragenter = function(e){e.preventDefault();}
-      fileaccess.ondragover = function(e){e.preventDefault();}
+        document.querySelector('#play').addEventListener('click', pauseButton, false);
+      };
     </script>
+    <script type="text/javascript" src="http://cdn.rawgit.com/deskjet/chiptune2.js/master/libopenmpt.js"></script>
+    <script type="text/javascript" src="http://cdn.rawgit.com/deskjet/chiptune2.js/master/chiptune2.js"></script>
   </head>
   <body>
     <div class="bg bg1"></div>
@@ -123,18 +138,17 @@
         <span id="artist"></span>
       </div>
       <div id="controls" class="banner">
-        <a onclick="pauseButton()" id="play" class="control"></a>
+        <a id="play" class="control"></a>
       </div>
       <div id="choosefile" class="banner">
         <input type="file" id="files" name="files" onchange="loadFile(this.files[0])"/>
       </div>
       <div id="demos" class="banner"><div>
         <h2>Demo Songs</h2>
-        <a class="song" onclick="loadURL('tunes/mysteristerium.mod')" href="#">mysterysterium by maktone<span class="size">23kb</span></a>
-        <a class="song" onclick="loadURL('tunes/rfchip001.xm')" href="#">RF chip #001 by Dubmood and Bliss<span class="size">31kb</span></a>
-        <a class="song" onclick="loadURL('tunes/cydonian sky.xm')" href="#">Cydonian Sky by Dubmood<span class="size">31kb</span></a>
-        <a class="song" onclick="loadURL('tunes/chipsounds.mod')" href="#">Chipsounds by 4-Mat<span class="size">18kb</span></a>
-        <!-- <a class="song" onclick="loadURL('tunes/')" href="#"> by </a> -->
+        <a class="song" data-modurl="tunes/mysteristerium.mod" href="#">mysterysterium by maktone<span class="size">23kb</span></a>
+        <a class="song" data-modurl="tunes/rfchip001.xm" href="#">RF chip #001 by Dubmood and Bliss<span class="size">31kb</span></a>
+        <a class="song" data-modurl="tunes/cydonian sky.xm" href="#">Cydonian Sky by Dubmood<span class="size">31kb</span></a>
+        <a class="song" data-modurl="tunes/chipsounds.mod" href="#">Chipsounds by 4-Mat<span class="size">18kb</span></a>
       </div></div>
     </div>
   </body>
