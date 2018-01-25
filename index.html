@@ -11,11 +11,11 @@
     <link rel="stylesheet" href="css/screen.css">
 
     <script type="text/javascript">
-      window['Module'] = {};
-      Module.locateFile = function(filename) {
+      window['libopenmpt'] = {};
+      libopenmpt.locateFile = function(filename) {
         return "//cdn.rawgit.com/deskjet/chiptune2.js/master/" + filename;
       };
-      Module.onRuntimeInitialized = function() {
+      libopenmpt.onRuntimeInitialized = function() {
         var player;
 
         function init() {
