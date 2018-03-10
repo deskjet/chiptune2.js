@@ -120,6 +120,10 @@
           }, false);
         });
 
+        document.querySelector('input[name=files]').addEventListener('change', function(evt) {
+          loadFile(evt.target.files[0]);
+        });
+
         document.querySelector('#play').addEventListener('click', pauseButton, false);
       };
     </script>
@@ -141,7 +145,7 @@
         <a id="play" class="control"></a>
       </div>
       <div id="choosefile" class="banner">
-        <input type="file" id="files" name="files" onchange="loadFile(this.files[0])"/>
+        <input type="file" id="files" name="files"/>
       </div>
       <div id="demos" class="banner"><div>
         <h2>Demo Songs</h2>
