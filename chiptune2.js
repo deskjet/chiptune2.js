@@ -63,6 +63,10 @@ ChiptuneJsPlayer.prototype.metadata = function() {
   return data;
 }
 
+ChiptuneJsPlayer.prototype.module_ctl_set = function(ctl, value) {
+  return libopenmpt.ccall('openmpt_module_ctl_set', 'number', ['number', 'string', 'string'], [this.currentPlayingNode.modulePtr, ctl, value]) === 1;
+}
+
 // playing, etc
 ChiptuneJsPlayer.prototype.unlock = function() {
 
@@ -79,8 +83,7 @@ ChiptuneJsPlayer.prototype.unlock = function() {
 
 ChiptuneJsPlayer.prototype.load = function(input, callback) {
 
-  if (this.touchLocked)
-  {
+  if (this.touchLocked) {
     this.unlock();
   }
 
