@@ -1,14 +1,14 @@
 # Chiptune.js
 #### Version 2
 
-This is a javascript library that can play module music files. It is based on the [libopenmpt](https://lib.openmpt.org/libopenmpt) C/C++ library. To translate libopenmpt into Javascript [emscripten](https://github.com/kripken/emscripten) was used. For audio output inside the browser WebAudio API ist used.
+This is a javascript library that can play module music files. It is based on the [libopenmpt](https://lib.openmpt.org/libopenmpt) C/C++ library. To translate libopenmpt into Javascript [emscripten](https://github.com/kripken/emscripten) was used. For audio output inside the browser WebAudio API is used.
 
 **Please note**: The compiled `libopenmpt.js` in this repository is based on an outdated version of libopenmpt. Newer versions contain bugfixes and other improvements. Download the latest version from the libopenmpt developers [here](https://lib.openmpt.org/libopenmpt/download/) and replace `libopenmpt.js.mem` and `libopenmpt.js`.  
 If you prefer to compile `libopenmpt.js` yourself (to save space or make custom changes) follow the instructions in the "Development" section.
 
 ## Features
 
-* Play all traker formats supported by libopenmpt (including mod, xm, s3m, it)
+* Play all tracker formats supported by libopenmpt (including mod, xm, s3m, it)
 * Simple Javascript API
 * Pause/Resume
 * Tested with Google Chrome and Firefox
