@@ -125,8 +125,10 @@
         });
 
         document.querySelector('input[name=submiturl]').addEventListener('click', function() {
-           modurl = document.querySelector('input[name=exturl]').value;
+           var exturl = document.querySelector('input[name=exturl]');
+           modurl = exturl.value;
            loadURL(modurl);
+           exturl.value = null;
         });
 
         document.querySelector('#play').addEventListener('click', pauseButton, false);
