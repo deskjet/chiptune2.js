@@ -108,7 +108,7 @@ body {
   padding: 1rem;
   background: white;
 }
-#demos > div h2, #chooseurl > div h2 {
+#demos > div h2 {
   margin: 0 0 0.5rem 0;
   font-size: 1.3rem;
 }
