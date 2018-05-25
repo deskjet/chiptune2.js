@@ -42,7 +42,7 @@ body {
   margin-top: 2.4rem;
 }
 
-#headline, #demosong, #metadata, #controls, #choosefile {
+#headline, #demosong, #metadata, #controls, #choosefile, #chooseurl {
   text-align: center;
 }
 
@@ -92,14 +92,14 @@ body {
   border: 1px solid rgba(215, 99, 34, 0.78);
 }
 
-#choosefile, #controls {
+#choosefile, #controls, #chooseurl {
   margin-top: 1.9rem;
 }
 
 #demos {
   text-align: center;
 }
-#demos > div {
+#demos > div, #chooseurl > div {
   display: inline-block;
   margin: 0 auto;
   text-align: left;
@@ -108,7 +108,7 @@ body {
   padding: 1rem;
   background: white;
 }
-#demos > div h2 {
+#demos > div h2, #chooseurl > div h2 {
   margin: 0 0 0.5rem 0;
   font-size: 1.3rem;
 }
