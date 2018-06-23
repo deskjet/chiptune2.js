@@ -38,14 +38,14 @@ Use this command inside the libopenmpt source folder to build:
 
 If it compiles successfully these files (and a few more) will be created in the `bin` directory:
 
-1. `libopenmpt.js` is libopenmpt comiled to JavaScript.
+1. `libopenmpt.js` is libopenmpt compiled to JavaScript.
 2. `libopenmpt.js.mem` is the memory initialization file `libopenmpt.js` will download/require it when loaded.
 3. `libopenmpt_test.js` (and `libopenmpt_test.j.mem`) is the libopenmpt test suite and can be run in NodeJS.
 
 Only the first two files are needed for chiptune2.js.
 
 ### Building Stylesheet
-The stylesheet is build with [SASS+Compass](http://compass-style.org/). To build this yourself, follow the Compass [installation instructions](http://compass-style.org/install/), then cd into the chiptune2.js directory and use this command:
+The stylesheet is built with [SASS+Compass](http://compass-style.org/). To build this yourself, follow the Compass [installation instructions](http://compass-style.org/install/), then change into the chiptune2.js directory and use this command:
 
     compass watch
 
