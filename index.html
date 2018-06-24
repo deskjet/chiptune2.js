@@ -1,171 +1,208 @@
 <!DOCTYPE html>
 <html class="no-js">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title></title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
 
-    <link rel="stylesheet" href="css/normalize.min.css">
-    <link rel="stylesheet" href="css/screen.css">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
 
-    <script type="text/javascript">
-      window['libopenmpt'] = {};
-      libopenmpt.locateFile = function(filename) {
-        return "//cdn.rawgit.com/deskjet/chiptune2.js/master/" + filename;
-      };
-      libopenmpt.onRuntimeInitialized = function() {
-        var player;
+  <link rel="stylesheet" href="css/normalize.min.css">
+  <link rel="stylesheet" href="css/screen.css">
 
-        function init() {
-          if (player == undefined) {
-            player = new ChiptuneJsPlayer(new ChiptuneJsConfig(-1));
-          }
-          else {
-            player.stop();
-            playPauseButton();
-          }
+  <script type="text/javascript">
+    window['libopenmpt'] = {};
+    libopenmpt.locateFile = function (filename) {
+      return "//cdn.rawgit.com/deskjet/chiptune2.js/master/" + filename;
+    };
+    libopenmpt.onRuntimeInitialized = function () {
+      var player;
+
+      function init() {
+        if (player == undefined) {
+          player = new ChiptuneJsPlayer(new ChiptuneJsConfig(-1));
+        }
+        else {
+          player.stop();
+          playPauseButton();
+        }
+      }
+
+      function setMetadata(filename) {
+        var metadata = player.metadata();
+        if (metadata['title'] != '') {
+          document.getElementById('title').innerHTML = metadata['title'];
+        }
+        else {
+          document.getElementById('title').innerHTML = filename;
         }
 
-        function setMetadata(filename) {
-          var metadata = player.metadata();
-          if (metadata['title'] != '') {
-            document.getElementById('title').innerHTML = metadata['title'];
-          }
-          else {
-            document.getElementById('title').innerHTML = filename;
-          }
-
-          if (metadata['artist'] != '') {
-            document.getElementById('artist').innerHTML = '<br />' + metadata['artist'];
-          }
-          else {
-            document.getElementById('artist').innerHTML = '';
-          }
+        if (metadata['artist'] != '') {
+          document.getElementById('artist').innerHTML = '<br />' + metadata['artist'];
         }
-
-        function loadURL(path) {
-          init();
-          player.load(path, function(buffer) {
-            player.play(buffer);
-            setMetadata(path);
-            pausePauseButton();
-          });
+        else {
+          document.getElementById('artist').innerHTML = '';
         }
+      }
 
-        function loadFile(file) {
-          init();
-          player.load(file, function(buffer) {
-            player.play(buffer);
-            setMetadata(file.name);
-            pausePauseButton();
-          });
-        }
-
-        function pauseButton() {
-          player.togglePause();
-          switchPauseButton();
-        }
-
-        function switchPauseButton() {
-          var button = document.getElementById('pause')
-          if (button) {
-            button.id = "play_tmp";
-          }
-          button = document.getElementById('play')
-          if (button) {
-            button.id = "pause";
-          }
-          button = document.getElementById('play_tmp')
-          if (button) {
-            button.id = "play";
-          }
-        }
-
-        function playPauseButton() {
-          var button = document.getElementById('pause')
-          if (button) {
-            button.id = "play";
-          }
-        }
-
-        function pausePauseButton() {
-          var button = document.getElementById('play')
-          if (button) {
-            button.id = "pause";
-          }
-        }
-
-        var fileaccess = document.querySelector('*');
-        fileaccess.ondrop = function(e) {
-          e.preventDefault();
-          var file = e.dataTransfer.files[0];
-          init();
-
-          player.load(file, function(buffer) {
-            player.play(buffer);
-            setMetadata(file.name);
-            pausePauseButton();
-          });
-        }
-
-        fileaccess.ondragenter = function(e){e.preventDefault();}
-        fileaccess.ondragover = function(e){e.preventDefault();}
-
-        document.querySelectorAll('.song').forEach(function (e) {
-          e.addEventListener('click', function(evt) {
-            modurl = evt.target.getAttribute("data-modurl");
-            loadURL(modurl);
-          }, false);
+      function loadURL(path) {
+        init();
+        player.load(path, function (buffer) {
+          player.play(buffer);
+          setMetadata(path);
+          pausePauseButton();
         });
+      }
 
-        document.querySelector('input[name=files]').addEventListener('change', function(evt) {
-          loadFile(evt.target.files[0]);
+      function loadFile(file) {
+        init();
+        player.load(file, function (buffer) {
+          player.play(buffer);
+          setMetadata(file.name);
+          pausePauseButton();
         });
+      }
 
-        document.querySelector('input[name=submiturl]').addEventListener('click', function() {
-           var exturl = document.querySelector('input[name=exturl]');
-           modurl = exturl.value;
-           loadURL(modurl);
-           exturl.value = null;
+      function pauseButton() {
+        player.togglePause();
+        switchPauseButton();
+      }
+
+      function switchPauseButton() {
+        var button = document.getElementById('pause')
+        if (button) {
+          button.id = "play_tmp";
+        }
+        button = document.getElementById('play')
+        if (button) {
+          button.id = "pause";
+        }
+        button = document.getElementById('play_tmp')
+        if (button) {
+          button.id = "play";
+        }
+      }
+
+      function playPauseButton() {
+        var button = document.getElementById('pause')
+        if (button) {
+          button.id = "play";
+        }
+      }
+
+      function pausePauseButton() {
+        var button = document.getElementById('play')
+        if (button) {
+          button.id = "pause";
+        }
+      }
+
+      var fileaccess = document.querySelector('*');
+      fileaccess.ondrop = function (e) {
+        e.preventDefault();
+        var file = e.dataTransfer.files[0];
+        init();
+
+        player.load(file, function (buffer) {
+          player.play(buffer);
+          setMetadata(file.name);
+          pausePauseButton();
         });
+      }
 
-        document.querySelector('#play').addEventListener('click', pauseButton, false);
-      };
-    </script>
-    <script type="text/javascript" src="//cdn.rawgit.com/deskjet/chiptune2.js/master/libopenmpt.js"></script>
-    <script type="text/javascript" src="//cdn.rawgit.com/deskjet/chiptune2.js/master/chiptune2.js"></script>
-  </head>
-  <body>
-    <div class="bg bg1"></div>
-    <div id="content">
-      <div id="info" class="banner">
-        <p>Usage: Drop any module file (.mod, .xm, .it, etc.) on this page and hit play!</p>
-      </div>
-      <div id="headline" class="banner"><h1>chiptune.js</h1></div>
-      <div id="metadata" class="banner">
-        <span id="title">nothing loaded</span>
-        <span id="artist"></span>
-      </div>
-      <div id="controls" class="banner">
-        <a id="play" class="control"></a>
-      </div>
-      <div id="choosefile" class="banner">
-        <input type="file" id="files" name="files"/>
-      </div>
-      <div id="chooseurl" class="banner">
+      fileaccess.ondragenter = function (e) { e.preventDefault(); }
+      fileaccess.ondragover = function (e) { e.preventDefault(); }
+
+      document.querySelectorAll('.song').forEach(function (e) {
+        e.addEventListener('click', function (evt) {
+          modurl = evt.target.getAttribute("data-modurl");
+          loadURL(modurl);
+        }, false);
+      });
+
+      document.querySelector('input[name=files]').addEventListener('change', function (evt) {
+        loadFile(evt.target.files[0]);
+      });
+
+      document.querySelector('input[name=submiturl]').addEventListener('click', function () {
+        var exturl = document.querySelector('input[name=exturl]');
+        modurl = exturl.value;
+        loadURL(modurl);
+        exturl.value = null;
+      });
+
+      document.querySelector('#play').addEventListener('click', pauseButton, false);
+
+      document.querySelector('#pitch').addEventListener('input', function (e) {
+        player.module_ctl_set('play.pitch_factor', e.target.value.toString());
+      }, false);
+
+      document.querySelector('#tempo').addEventListener('input', function (e) {
+        player.module_ctl_set('play.tempo_factor', e.target.value.toString());
+      }, false);
+    };
+  </script>
+  <script type="text/javascript" src="//cdn.rawgit.com/deskjet/chiptune2.js/master/libopenmpt.js"></script>
+  <script type="text/javascript" src="//cdn.rawgit.com/deskjet/chiptune2.js/master/chiptune2.js"></script>
+</head>
+
+<body>
+  <div class="bg bg1"></div>
+  <div id="content">
+    <div id="info" class="banner">
+      <p>Usage: Drop any module file (.mod, .xm, .it, etc.) on this page and hit play!</p>
+    </div>
+    <div id="headline" class="banner">
+      <h1>chiptune.js</h1>
+    </div>
+    <div id="metadata" class="banner">
+      <span id="title">nothing loaded</span>
+      <span id="artist"></span>
+    </div>
+    <div id="controls" class="banner">
+      <a id="play" class="control"></a>
+      <br>
+      <div id="sliders">
         <div>
-          <label>External URL <input type="text" id="exturl" name="exturl"> <input type="button" value="Submit" id="submiturl" name="submiturl"></label>
+          <label for="tempo">Tempo</label>
+          <input id="tempo" type="range" min="0.01" max="2" step="0.01">
+        </div>
+        <div>
+          <label for="pitch">Pitch</label>
+          <input id="pitch" type="range" min="0.01" max="2" step="0.01">
         </div>
       </div>
-      <div id="demos" class="banner"><div>
-        <h2>Demo Songs</h2>
-        <a class="song" data-modurl="tunes/mysteristerium.mod" href="#">mysterysterium by maktone<span class="size">23kb</span></a>
-        <a class="song" data-modurl="tunes/rfchip001.xm" href="#">RF chip #001 by Dubmood and Bliss<span class="size">31kb</span></a>
-        <a class="song" data-modurl="tunes/cydonian sky.xm" href="#">Cydonian Sky by Dubmood<span class="size">31kb</span></a>
-        <a class="song" data-modurl="tunes/chipsounds.mod" href="#">Chipsounds by 4-Mat<span class="size">18kb</span></a>
-      </div></div>
     </div>
-  </body>
+    <div id="choosefile" class="banner">
+      <input type="file" id="files" name="files" />
+    </div>
+    <div id="chooseurl" class="banner">
+      <div>
+        <label>External URL
+          <input type="text" id="exturl" name="exturl">
+          <input type="button" value="Submit" id="submiturl" name="submiturl">
+        </label>
+      </div>
+    </div>
+    <div id="demos" class="banner">
+      <div>
+        <h2>Demo Songs</h2>
+        <a class="song" data-modurl="tunes/mysteristerium.mod" href="#">mysterysterium by maktone
+          <span class="size">23kb</span>
+        </a>
+        <a class="song" data-modurl="tunes/rfchip001.xm" href="#">RF chip #001 by Dubmood and Bliss
+          <span class="size">31kb</span>
+        </a>
+        <a class="song" data-modurl="tunes/cydonian sky.xm" href="#">Cydonian Sky by Dubmood
+          <span class="size">31kb</span>
+        </a>
+        <a class="song" data-modurl="tunes/chipsounds.mod" href="#">Chipsounds by 4-Mat
+          <span class="size">18kb</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+
 </html>

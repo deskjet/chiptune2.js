@@ -48,7 +48,7 @@ body
     + .banner
         margin-top: 2.4rem
 
-#headline, #demosong, #metadata, #controls, #choosefile
+#headline, #demosong, #metadata, #controls, #choosefile, #chooseurl
     text-align: center
 
 #info
@@ -85,10 +85,10 @@ body
         border-radius: 0.35rem
         border: 1px solid rgba(215, 99, 34, 0.78)
 
-#choosefile, #controls
+#choosefile, #controls, #chooseurl
     margin-top: 1.9rem
 
-#demos
+#demos, #chooseurl
     text-align: center
     > div
         display: inline-block
@@ -151,3 +151,19 @@ body
             background-repeat: no-repeat
         &:checked + label
             box-shadow: 0px 3px 0px rgba(50,50,50,1), 0px 3px 6px rgba(0,0,0,.7)
+
+#sliders
+    display: inline-flex
+    flex-direction: column
+    margin: 1.9rem 0 0 auto
+    text-align: left
+    border-radius: 0.35rem
+    border: 1px solid rgba(215, 99, 34, 0.78)
+    padding: 1rem
+    background: #f7f7f7
+    line-height: 2
+    > div
+        display: inline-flex
+        justify-content: space-between
+        > input
+            margin-left: 1rem
