@@ -46,22 +46,16 @@
         }
       }
 
-      function loadURL(path) {
-        init();
-        player.load(path, function (buffer) {
-          player.play(buffer);
-          setMetadata(path);
-          pausePauseButton();
-        });
+      function afterLoad(path, buffer) {
+        document.querySelectorAll('#pitch,#tempo').forEach(e => e.value = 1);
+        player.play(buffer);
+        setMetadata(path);
+        pausePauseButton();
       }
 
-      function loadFile(file) {
+      function loadURL(path) {
         init();
-        player.load(file, function (buffer) {
-          player.play(buffer);
-          setMetadata(file.name);
-          pausePauseButton();
-        });
+        player.load(path, afterLoad.bind(this, path));
       }
 
       function pauseButton() {
@@ -104,11 +98,7 @@
         var file = e.dataTransfer.files[0];
         init();
 
-        player.load(file, function (buffer) {
-          player.play(buffer);
-          setMetadata(file.name);
-          pausePauseButton();
-        });
+        player.load(file, afterLoad.bind(this, path));
       }
 
       fileaccess.ondragenter = function (e) { e.preventDefault(); }
@@ -122,7 +112,7 @@
       });
 
       document.querySelector('input[name=files]').addEventListener('change', function (evt) {
-        loadFile(evt.target.files[0]);
+        loadURL(evt.target.files[0]);
       });
 
       document.querySelector('input[name=submiturl]').addEventListener('click', function () {
