@@ -70,12 +70,12 @@ ChiptuneJsPlayer.prototype.getCurrentOrder = function() {
 
 ChiptuneJsPlayer.prototype.metadata = function() {
   var data = {};
-  var keys = Pointer_stringify(libopenmpt._openmpt_module_get_metadata_keys(this.currentPlayingNode.modulePtr)).split(';');
+  var keys = UTF8ToString(libopenmpt._openmpt_module_get_metadata_keys(this.currentPlayingNode.modulePtr)).split(';');
   var keyNameBuffer = 0;
   for (var i = 0; i < keys.length; i++) {
     keyNameBuffer = libopenmpt._malloc(keys[i].length + 1);
     writeAsciiToMemory(keys[i], keyNameBuffer);
-    data[keys[i]] = Pointer_stringify(libopenmpt._openmpt_module_get_metadata(this.currentPlayingNode.modulePtr, keyNameBuffer));
+    data[keys[i]] = UTF8ToString(libopenmpt._openmpt_module_get_metadata(this.currentPlayingNode.modulePtr, keyNameBuffer));
     libopenmpt._free(keyNameBuffer);
   }
   return data;
