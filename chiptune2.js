@@ -68,6 +68,18 @@ ChiptuneJsPlayer.prototype.getCurrentOrder = function() {
   return libopenmpt._openmpt_module_get_current_order(this.currentPlayingNode.modulePtr);  
 }
 
+ChiptuneJsPlayer.prototype.getCurrentTime = function () {
+  return libopenmpt._openmpt_module_get_position_seconds(this.currentPlayingNode.modulePtr);
+};
+
+ChiptuneJsPlayer.prototype.getTotalOrder = function () {
+  return libopenmpt._openmpt_module_get_num_orders(this.currentPlayingNode.modulePtr);
+};
+
+ChiptuneJsPlayer.prototype.getTotalPatterns = function () {
+  return libopenmpt._openmpt_module_get_num_patterns(this.currentPlayingNode.modulePtr);
+};
+
 ChiptuneJsPlayer.prototype.metadata = function() {
   var data = {};
   var keys = UTF8ToString(libopenmpt._openmpt_module_get_metadata_keys(this.currentPlayingNode.modulePtr)).split(';');
