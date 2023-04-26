@@ -52,6 +52,102 @@ ChiptuneJsPlayer.prototype.onError = function (handler) {
 }
 
 // metadata
+// expose interactive methods of module
+ChiptuneJsPlayer.prototype.getInterface = function() {
+  // a = 0;
+  const openmpt_module_ext = {
+    set_current_speed: 0,
+    set_current_tempo: 0,
+    set_tempo_factor: 0,
+    get_tempo_factor: 0,
+    set_pitch_factor: 0,
+    get_pitch_factor: 0,
+    set_global_volume: 0,
+    get_global_volume: 0,
+    set_channel_volume: 0,
+    get_channel_volume: 0,
+    set_channel_mute_status: 0,
+    get_channel_mute_status: 0,
+    set_instrument_mute_status: 0,
+    get_instrument_mute_status: 0,
+    play_note: 0,
+    stop_note: 0
+  };
+
+  const interacticeStruct = [
+    {
+      fn: "set_current_speed",
+      pointer: null,
+      callid: "dynCall_ji"
+    },
+    {
+      fn: "set_current_tempo",
+      pointer: null,
+      callid: "dynCall_ji"
+    },
+    {
+      fn: "set_tempo_factor",
+      pointer: null,
+      callid: "dynCall_ji"
+    },
+    {
+      fn: "get_tempo_factor",
+      pointer: null,
+      callid: "dynCall_ji"
+    }
+  ];
+  
+  const interface_id_bind = "interactive";
+  // const interfaceId = UTF8ArrayToString(intArrayFromString(interface_id_bind), 0);
+  const interfaceId = intArrayFromString(interface_id_bind);
+  const interfaceIdCString = libopenmpt._malloc(interfaceId.length + 1);
+  console.log(" interface before write", libopenmpt.HEAPU8.subarray(interfaceIdCString, interfaceIdCString + interfaceId.length + 1));
+  stringToUTF8(interface_id_bind, interfaceIdCString, lengthBytesUTF8(interface_id_bind)+1);
+  const interfaceIdPtr = libopenmpt.HEAPU8.subarray(interfaceIdCString, interfaceIdCString + interfaceId.length + 1);
+
+  // const interactivestruct_id_bind = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
+  const interactivestruct_id_bind = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
+  const interactivestructId = intArrayFromString(interactivestruct_id_bind);
+  const interactivestructIdCString = libopenmpt._malloc(interactivestructId.length + 1);
+  console.log(" struct before write", libopenmpt.HEAPU8.subarray(interactivestructIdCString, interactivestructIdCString + interactivestructId.length + 1));
+  stringToUTF8(interactivestruct_id_bind, interactivestructIdCString, lengthBytesUTF8(interactivestruct_id_bind)+1);
+  const interactivestructIdPtr = libopenmpt.HEAPU8.subarray(interactivestructIdCString, interactivestructIdCString + interactivestructId.length + 1);
+
+  console.log("pointer of interface", interfaceIdCString, interfaceIdPtr);
+  console.log("pointer of interactive struct?", interactivestructIdCString, interactivestructIdPtr);
+
+  const result = libopenmpt._openmpt_module_ext_get_interface(this.currentPlayingNode.modulePtr, interfaceIdCString, interactivestructIdCString, lengthBytesUTF8(interactivestruct_id_bind));
+
+  if (result == 1) {
+    const uint32Array = new Uint32Array(interactivestructIdPtr.buffer, interactivestructIdPtr.byteOffset, (interactivestructIdPtr.byteLength / 4));
+    console.log("Nice, heres the function address : ", uint32Array);
+    const setTempoFactor = (factor) => {
+      return libopenmpt.dynCall_jii(uint32Array[2], this.currentPlayingNode.modulePtr, factor);
+    };
+
+    const setTempoFactor2 = (factor) => {
+      return wasmTable.get(uint32Array[2])(this.currentPlayingNode.modulePtr, factor);
+    };
+
+    const getTempoFactor = () => {
+      return libopenmpt.dynCall_ji(uint32Array[3], this.currentPlayingNode.modulePtr);
+    };
+
+    const setMuteCh = (chNum, isMute) => {
+      return wasmTable.get(uint32Array[10])(this.currentPlayingNode.modulePtr, chNum, isMute);
+    };
+
+
+    const getMuteCh = (chNum) => {
+      return wasmTable.get(uint32Array[11])(this.currentPlayingNode.modulePtr, chNum);
+    };
+    console.log("Here is function to get mute : ", getMuteCh);
+    console.log("Here is function to set mute : ", setMuteCh);
+  }
+
+  return result;
+}
+
 ChiptuneJsPlayer.prototype.duration = function() {
   return libopenmpt._openmpt_module_get_duration_seconds(this.currentPlayingNode.modulePtr);
 }
@@ -186,7 +282,8 @@ ChiptuneJsPlayer.prototype.createLibopenmptNode = function(buffer, config) {
   var byteArray = new Int8Array(buffer);
   var ptrToFile = libopenmpt._malloc(byteArray.byteLength);
   libopenmpt.HEAPU8.set(byteArray, ptrToFile);
-  processNode.modulePtr = libopenmpt._openmpt_module_create_from_memory(ptrToFile, byteArray.byteLength, 0, 0, 0);
+  // processNode.modulePtr = libopenmpt._openmpt_module_create_from_memory(ptrToFile, byteArray.byteLength, 0, 0, 0);
+  processNode.modulePtr = libopenmpt._openmpt_module_ext_create_from_memory(ptrToFile, byteArray.byteLength, 0, 0, 0, 0, 0, 0, 0);
   processNode.paused = false;
   processNode.leftBufferPtr  = libopenmpt._malloc(4 * maxFramesPerChunk);
   processNode.rightBufferPtr = libopenmpt._malloc(4 * maxFramesPerChunk);
@@ -243,6 +340,7 @@ ChiptuneJsPlayer.prototype.createLibopenmptNode = function(buffer, config) {
     while (framesToRender > 0) {
       var framesPerChunk = Math.min(framesToRender, maxFramesPerChunk);
       var actualFramesPerChunk = libopenmpt._openmpt_module_read_float_stereo(this.modulePtr, this.context.sampleRate, framesPerChunk, this.leftBufferPtr, this.rightBufferPtr);
+      // var actualFramesPerChunk = libopenmpt._openmpt_module_read_interleaved_float_stereo(this.modulePtr, this.context.sampleRate, framesPerChunk, this.leftBufferPtr, this.rightBufferPtr);
       if (actualFramesPerChunk == 0) {
         ended = true;
         // modulePtr will be 0 on openmpt: error: openmpt_module_read_float_stereo: ERROR: module * not valid or other openmpt error
