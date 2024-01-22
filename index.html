@@ -102,30 +102,47 @@ chiptune.onInitialized(() => {
 			<legend>Metadata</legend>
 			<div id="metadata"></div>
 		</section>
+
+		<!-- for audio playback policy -->
+		<div id="audioModal">👉 💻 👂 🎶</div>
 	</main>
 
 	<script type="module">
 		import {ChiptuneJsPlayer} from './chiptune3.js'
-		window.chiptune = new ChiptuneJsPlayer()
 
-		// listen events
-		chiptune.onInitialized(() => {
-			chiptune.load('https://deskjet.github.io/chiptune2.js/tunes/chipsounds.mod')
-		})
-		chiptune.onEnded(() => {
-			console.log('Song ended')
-			chiptune.stop()
-		})
-		chiptune.onError((err) => {
-			console.log('Song error', err)
-		})
-		chiptune.onProgress((pos) => {
-			seekbar.value = pos
-		})
-		chiptune.onMetadata((meta) => {
-			seekbar.max = meta.dur
-			metadata.innerHTML = JSON.stringify(meta).replace(/,/g,'<br/>&nbsp;&nbsp;')
-		})
+		// stupid no audio till user interaction policy thingy
+		function userInteracted() {
+			removeEventListener('keydown', userInteracted)
+			removeEventListener('click', userInteracted)
+			removeEventListener('touchstart', userInteracted)
+
+			audioModal.classList.add('fadeOut')
+
+			// init
+			window.chiptune = new ChiptuneJsPlayer()
+
+			// listen events
+			chiptune.onInitialized(() => {
+				chiptune.load('https://deskjet.github.io/chiptune2.js/tunes/chipsounds.mod')
+			})
+			chiptune.onEnded(() => {
+				console.log('Song ended')
+				chiptune.stop()
+			})
+			chiptune.onError((err) => {
+				console.log('Song error', err)
+			})
+			chiptune.onProgress((pos) => {
+				seekbar.value = pos
+			})
+			chiptune.onMetadata((meta) => {
+				seekbar.max = meta.dur
+				metadata.innerHTML = JSON.stringify(meta).replace(/,/g,'<br/>&nbsp;&nbsp;')
+			})
+		}
+		addEventListener('keydown', userInteracted)
+		addEventListener('click', userInteracted)
+		addEventListener('touchstart', userInteracted)
 	</script>
 </body>
 </html>
