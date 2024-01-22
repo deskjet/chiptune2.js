@@ -1,0 +1,20 @@
+body {
+	font: 12pt sans-serif;
+}
+table,
+input[type="range"]
+{
+	width: 100%;
+}
+
+fieldset {
+	border-radius: 10px;
+	border: 1px dotted #00F;
+}
+legend {
+	font-style: italic;
+	font-weight: bold;
+}
+pre {
+	font-size: small;
+}

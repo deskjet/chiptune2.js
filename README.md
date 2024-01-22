@@ -1,6 +1,18 @@
 # Chiptune.js
-#### Version 2
+#### Version 3
+Modernized ES6 module version with libopenmpt AudioWorklet backend
 
+Exported_Functions: '_malloc','_free','stackAlloc','stackSave','stackRestore','UTF8ToString'
+
+See: https://DrSnuggles.github.io/chiptune
+
+## ToDo
+- build/rollup to make it a single .js request
+
+## History
+- 2024-01-22: Libopenmpt 0.7.3 compiled with Emscripten 3.1.51
+
+#### Version 2
 This is a javascript library that can play module music files. It is based on the [libopenmpt](https://lib.openmpt.org/libopenmpt) C/C++ library. To translate libopenmpt into Javascript [emscripten](https://github.com/kripken/emscripten) was used. For audio output inside the browser WebAudio API is used.
 
 **Please note**: The compiled `libopenmpt.js` in this repository is based on an outdated version of libopenmpt. Newer versions contain bugfixes and other improvements. Download the latest version from the libopenmpt developers [here](https://lib.openmpt.org/libopenmpt/download/) and replace `libopenmpt.js.mem` and `libopenmpt.js`.  
@@ -68,7 +80,7 @@ All code in this project is MIT (X11) licensed. The only exception are the compi
 
 License text below:
 
->Copyright © 2013-2017 The chiptune2.js contributers.
+>Copyright © 2013-2024 The chiptune2.js contributers.
 >
 >Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 >

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Chiptune Worklet Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<meta name="description" content="Chiptune Audio Player"/>
+	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🔊</text></svg>"/>
+	<link href="./css/style.css" rel="stylesheet"/>
+</head>
+<body>
+	<main>
+		<section>
+			<fieldset>
+			<legend>Chiptune3</legend>
+			This is an updated Chiptune ES6 module version to work with libopenmpt AudioWorklet.<br/>
+			Usage:<pre>
+// Import ES6 module
+import {ChiptuneJsPlayer} from 'https://DrSnuggles.github.io/chiptune/chiptune3.js'
+
+// Create instance (wherever you want)
+window.chiptune = new ChiptuneJsPlayer()
+// if you already have an audioContext you can provide here, but then chiptune does not route to speakers! Connect chiptune.gain
+
+// Wait for ready
+chiptune.onInitialized(() => {
+	// Play awesome music
+	chiptune.load('https://deskjet.github.io/chiptune2.js/tunes/chipsounds.mod')
+})</pre>
+		</section>
+
+		<section>
+			<fieldset>
+			<legend>Methods</legend>
+			<table>
+				<tr>
+					<td>chiptune.load(url)</td>
+					<td><button onclick="chiptune.load('https://deskjet.github.io/chiptune2.js/tunes/chipsounds.mod')">Load</button></td>
+				</tr>
+				<tr>
+					<td>chiptune.play(arrayBuffer)</td>
+					<td>Play buffer. This is also called by load.</td>
+				</tr>
+				<tr>
+					<td>chiptune.stop()</td>
+					<td><button onclick="chiptune.stop()">Stop</button></td>
+				</tr>
+				<tr>
+					<td>chiptune.pause()</td>
+					<td><button onclick="chiptune.pause()">Pause</button></td>
+				</tr>
+				<tr>
+					<td>chiptune.unpause()</td>
+					<td><button onclick="chiptune.unpause()">Unpause</button></td>
+				</tr>
+				<tr>
+					<td>chiptune.togglePause()</td>
+					<td><button onclick="chiptune.togglePause()">Toggle Pause</button></td>
+				</tr>
+				<tr>
+					<td>chiptune.setRepeatCount(val)</td>
+					<td><input onchange="chiptune.setRepeatCount(this.value)" type="number" min="-1" max="99" step="1" value="-1"/>-1 = endless; 0 = just play once</td>
+				</tr>
+				<tr>
+					<td>chiptune.selectSubsong(val)</td>
+					<td><div id="subsongs"></div></td>
+				</tr>
+				<tr>
+					<td>chiptune.setPos(float)<br/>
+						chiptune.seek(float)
+					</td>
+					<td><input oninput="chiptune.setPos(this.value)" type="range" min="0" max="2" step="0.0001" id="seekbar"/></td>
+				</tr>
+				<tr>
+					<td>chiptune.setVol(float)</td>
+					<td><input oninput="chiptune.setVol(this.value)" type="range" min="0" max="2" step="0.0001"/></td>
+				</tr>
+				<tr>
+					<td>chiptune.setPitch(float)</td>
+					<td><input oninput="chiptune.setPitch(this.value)" type="range" min="0" max="2" step="0.0001"/></td>
+				</tr>
+				<tr>
+					<td>chiptune.setTempo(float)</td>
+					<td><input oninput="chiptune.setTempo(this.value)" type="range" min="0" max="2" step="0.0001"/></td>
+				</tr>
+			</table>
+			</fieldset>
+		</section>
+
+		<section>
+			<fieldset>
+			<legend>Events</legend>
+			chiptune.onInitialized = () => {}<br/>
+			chiptune.onEnded = () => {}<br/>
+			chiptune.onError = (err) => {}<br/>
+			chiptune.onMetadata = (meta) => {}<br/>
+			chiptune.onProgress = (pos) => {}
+			</fieldset>
+		</section>
+
+		<section>
+			<fieldset>
+			<legend>Metadata</legend>
+			<div id="metadata"></div>
+		</section>
+	</main>
+
+	<script type="module">
+		import {ChiptuneJsPlayer} from './chiptune3.js'
+		window.chiptune = new ChiptuneJsPlayer()
+
+		// listen events
+		chiptune.onInitialized(() => {
+			chiptune.load('https://deskjet.github.io/chiptune2.js/tunes/chipsounds.mod')
+		})
+		chiptune.onEnded(() => {
+			console.log('Song ended')
+			chiptune.stop()
+		})
+		chiptune.onError((err) => {
+			console.log('Song error', err)
+		})
+		chiptune.onProgress((pos) => {
+			seekbar.value = pos
+		})
+		chiptune.onMetadata((meta) => {
+			seekbar.max = meta.dur
+			metadata.innerHTML = JSON.stringify(meta).replace(/,/g,'<br/>&nbsp;&nbsp;')
+		})
+	</script>
+</body>
+</html>
