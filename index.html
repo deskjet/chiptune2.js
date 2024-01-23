@@ -13,6 +13,7 @@
 			<fieldset>
 			<legend>Chiptune3</legend>
 			This is an updated Chiptune ES6 module version to work with libopenmpt AudioWorklet.<br/>
+			Drop in your favorite module.<br/>
 			Usage:<pre>
 // Import ES6 module
 import {ChiptuneJsPlayer} from 'https://DrSnuggles.github.io/chiptune/chiptune3.js'
@@ -108,6 +109,7 @@ chiptune.onInitialized(() => {
 	</main>
 
 	<script type="module">
+		import {dnd} from './dnd.js'
 		import {ChiptuneJsPlayer} from './chiptune3.js'
 
 		// stupid no audio till user interaction policy thingy
@@ -123,7 +125,12 @@ chiptune.onInitialized(() => {
 
 			// listen events
 			chiptune.onInitialized(() => {
+				// play song
 				chiptune.load('https://deskjet.github.io/chiptune2.js/tunes/chipsounds.mod')
+				// dnd
+				dnd(window, (aB) => {
+					chiptune.play(aB)
+				})
 			})
 			chiptune.onEnded(() => {
 				console.log('Song ended')
@@ -143,6 +150,7 @@ chiptune.onInitialized(() => {
 		addEventListener('keydown', userInteracted)
 		addEventListener('click', userInteracted)
 		addEventListener('touchstart', userInteracted)
+
 	</script>
 </body>
 </html>

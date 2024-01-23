@@ -4,6 +4,8 @@ Modernized ES6 module version with libopenmpt AudioWorklet backend
 
 See: https://DrSnuggles.github.io/chiptune
 
+Drop in your favorite songs.
+
 ## Build
 Docker was used to build the library
 
@@ -20,7 +22,7 @@ If you know the answer please let me know.
 - build/rollup to make it a single .js request
 
 ## History
-- 2024-01-23: Added files to build library using Docker. Changed to smaller one.
+- 2024-01-23: Drag'n'Drop files. Build library using Docker.
 - 2024-01-22: Libopenmpt 0.7.3 compiled with Emscripten 3.1.51
 
 #### Version 2
