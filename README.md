@@ -2,14 +2,25 @@
 #### Version 3
 Modernized ES6 module version with libopenmpt AudioWorklet backend
 
+See: https://DrSnuggles.github.io/chiptune
+
+## Build
+Docker was used to build the library
+
 Exported_Functions: '_malloc','_free','stackAlloc','stackSave','stackRestore','UTF8ToString'
 
-See: https://DrSnuggles.github.io/chiptune
+CD into docker and run build.bat (Win) or build.sh (Linux)
+
+### Question of the day
+Why is the Windows version about 4kB smaller?
+
+If you know the answer please let me know.
 
 ## ToDo
 - build/rollup to make it a single .js request
 
 ## History
+- 2024-01-23: Added files to build library using Docker. Changed to smaller one.
 - 2024-01-22: Libopenmpt 0.7.3 compiled with Emscripten 3.1.51
 
 #### Version 2
