@@ -42,3 +42,17 @@ pre {
 		z-index: -604;
 	}
 }
+
+#info {
+	width: calc(100% - 427px);
+}
+#myCanvas {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 240px;
+}
+#songSel {
+	width: 100%;
+	height: calc(100vh - 260px);
+}

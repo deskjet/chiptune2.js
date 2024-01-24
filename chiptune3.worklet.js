@@ -45,7 +45,7 @@ class MPT extends AudioWorkletProcessor {
 		this.port.onmessage = this.handleMessage_.bind(this)
 		this.paused = false
 		this.config = {
-			repeatCount: -1,
+			repeatCount: -1,		// -1 = play endless, 0 = play once, do not repeat
 			stereoSeparation: 100,	// percents
 			interpolationFilter: 0,	// https://lib.openmpt.org/doc/group__openmpt__module__render__param.html
 		}
@@ -83,6 +83,9 @@ class MPT extends AudioWorkletProcessor {
 		//console.log('[Processor:Received]',msg.data)
 		const v = msg.data.val
 		switch (msg.data.cmd) {
+			case 'config':
+				this.config = v
+				break
 			case 'play':
 				this.play(v)
 				break
@@ -137,6 +140,12 @@ class MPT extends AudioWorkletProcessor {
 		libopenmpt.HEAPU8.set(byteArray, ptrToFile)
 		this.modulePtr = libopenmpt._openmpt_module_create_from_memory(ptrToFile, byteArray.byteLength, 0, 0, 0)
 
+		if(this.modulePtr === 0) {
+			// could not create module
+			this.port.postMessage({cmd:'err',val:'ptr'})
+			return
+		}
+
 		if (libopenmpt.stackSave) {
 			const stack = libopenmpt.stackSave()
 			libopenmpt._openmpt_module_ctl_set(this.modulePtr, asciiToStack('render.resampler.emulate_amiga'), asciiToStack('1'))
@@ -152,8 +161,8 @@ class MPT extends AudioWorkletProcessor {
 
 		// set config options on module
 		libopenmpt._openmpt_module_set_repeat_count(this.modulePtr, this.config.repeatCount)
-		//libopenmpt._openmpt_module_set_render_param(this.modulePtr, OPENMPT_MODULE_RENDER_STEREOSEPARATION_PERCENT, this.config.stereoSeparation)
-		//libopenmpt._openmpt_module_set_render_param(this.modulePtr, OPENMPT_MODULE_RENDER_INTERPOLATIONFILTER_LENGTH, this.config.interpolationFilter)
+		libopenmpt._openmpt_module_set_render_param(this.modulePtr, OPENMPT_MODULE_RENDER_STEREOSEPARATION_PERCENT, this.config.stereoSeparation)
+		libopenmpt._openmpt_module_set_render_param(this.modulePtr, OPENMPT_MODULE_RENDER_INTERPOLATIONFILTER_LENGTH, this.config.interpolationFilter)
 
 		// post back tracks metadata
 		this.meta()
@@ -183,7 +192,7 @@ class MPT extends AudioWorkletProcessor {
 		data.dur = libopenmpt._openmpt_module_get_duration_seconds(this.modulePtr)
 		if (data.dur == 0) {
 			// looks like an error occured reading the mod
-			this.port.postMessage({cmd:'err',val:'Duration'})
+			this.port.postMessage({cmd:'err',val:'dur'})
 		}
 		const keys = libopenmpt.UTF8ToString(libopenmpt._openmpt_module_get_metadata_keys(this.modulePtr)).split(';')
 		for (let i = 0; i < keys.length; i++) {

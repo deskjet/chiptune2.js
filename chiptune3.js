@@ -1,31 +1,36 @@
 /*
 	chiptune3 (worklet version)
 	based on: https://deskjet.github.io/chiptune2.js/
-
-	2 ways to use:
-	- new ChiptuneJsPlay() : Uses new AudioContext() and outputs to gain and speakers
-	- new ChiptuneJsPlay(ctx) : Uses given ctx and only outputs to gain
 */
 
-export class ChiptuneJsPlayer {
-	constructor(ctx) {
+const defaultCfg = {
+	repeatCount: -1,		// -1 = play endless, 0 = play once, do not repeat
+	stereoSeparation: 100,	// percents
+	interpolationFilter: 0,	// https://lib.openmpt.org/doc/group__openmpt__module__render__param.html
+	context: false,
+}
 
-		if (ctx) {
-			if (!ctx.destination) {
+export class ChiptuneJsPlayer {
+	constructor(cfg) {
+		this.config = {...defaultCfg, ...cfg}
+
+		if (this.config.context) {
+			if (!this.config.context.destination) {
 				//console.error('This is not an audio context.')
 				throw('ChiptuneJsPlayer: This is not an audio context')
 			}
-			this.context = ctx
+			this.context = this.config.context
 			this.destination = false
 		} else {
 			this.context = new AudioContext()
 			this.destination = this.context.destination	// output to speakers
 		}
+		delete this.config.context	// remove from config, just used here and after init not changeable
+
 		// make gainNode
 		this.gain = this.context.createGain()
 		this.gain.gain.value = 1
 
-		this.config = {repeatCount: -1}
 		this.handlers = []
 
 		// worklet
@@ -38,6 +43,7 @@ export class ChiptuneJsPlayer {
 			})
 			// message port
 			this.processNode.port.onmessage = this.handleMessage_.bind(this)
+			this.processNode.port.postMessage({cmd:'config', val:this.config})
 			this.fireEvent('onInitialized')
 
 			// audio routing
