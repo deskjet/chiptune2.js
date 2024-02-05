@@ -49,6 +49,7 @@ class MPT extends AudioWorkletProcessor {
 			stereoSeparation: 100,	// percents
 			interpolationFilter: 0,	// https://lib.openmpt.org/doc/group__openmpt__module__render__param.html
 		}
+		this.channels = 0
 	}
 
 	process(inputList, outputList, parameters) {
@@ -74,7 +75,28 @@ class MPT extends AudioWorkletProcessor {
 		right.set(libopenmpt.HEAPF32.subarray(this.rightPtr / 4, this.rightPtr / 4 + actualFramesPerChunk))
 
 		// post progress
-		this.port.postMessage({cmd:'pos',pos:libopenmpt._openmpt_module_get_position_seconds(this.modulePtr)})
+		// 	openmpt_module_get_current_order
+
+		let msg = {
+			cmd: 'pos',
+			pos: libopenmpt._openmpt_module_get_position_seconds(this.modulePtr),
+			// pos in song
+			order: libopenmpt._openmpt_module_get_current_order(this.modulePtr),
+			pattern: libopenmpt._openmpt_module_get_current_pattern(this.modulePtr),
+			row: libopenmpt._openmpt_module_get_current_row(this.modulePtr),
+			// channel volumes
+			//chVol: [], // ch0Left, ch0Right, ch1Left, ...
+		}
+		/*
+		for (let i = 0; i < this.channels; i++) {
+			msg.chVol.push( {
+				left: libopenmpt._openmpt_module_get_current_channel_vu_left(this.modulePtr, i),
+				right: libopenmpt._openmpt_module_get_current_channel_vu_right(this.modulePtr, i),
+			})
+		}
+		*/
+
+		this.port.postMessage( msg )
 
 		return true // def. needed for Chrome
 	}
@@ -126,6 +148,20 @@ class MPT extends AudioWorkletProcessor {
 				if (!this.modulePtr) return
 				libopenmpt._openmpt_module_set_position_seconds(this.modulePtr, v)
 				break
+			case 'setOrderRow':
+				if (!this.modulePtr) return
+				libopenmpt._openmpt_module_set_position_order_row(this.modulePtr, v.o, v.r)
+				break
+			/*
+			case 'toggleMute'
+				// openmpt_module_ext_get_interface(mod_ext, interface_id, interface, interface_size)
+				// openmpt_module_ext_interface_interactive
+				// set_channel_mute_status
+				// https://lib.openmpt.org/doc/group__libopenmpt__ext__c.html#ga0275a35da407cd092232a20d3535c9e4
+				if (!this.modulePtr) return
+				//const extPtr = libopenmpt.openmpt_module_ext_get_interface(mod_ext, interface_id, interface, interface_size)
+				break
+			*/
 			default:
 				console.log('Received unknown message',msg.data)
 		}
@@ -181,9 +217,76 @@ class MPT extends AudioWorkletProcessor {
 			libopenmpt._free(this.rightBufferPtr)
 			this.rightBufferPtr = 0
 		}
+		this.channels = 0
 	}
 	meta() {
 		this.port.postMessage({cmd: 'meta', meta: this.getMeta()})
+	}
+	getSong() {
+		if (!libopenmpt.UTF8ToString || !this.modulePtr) return false
+
+		// https://lib.openmpt.org/doc/
+		let song = {
+			channels: [],
+			instruments: [],
+			samples: [],
+			orders: [],
+			numSubsongs: libopenmpt._openmpt_module_get_num_subsongs(this.modulePtr),
+			patterns: [],
+		}
+		// channels
+		const chNum = libopenmpt._openmpt_module_get_num_channels(this.modulePtr)
+		this.channel = chNum
+		for (let i = 0; i < chNum; i++) {
+			song.channels.push( libopenmpt.UTF8ToString(libopenmpt._openmpt_module_get_channel_name(this.modulePtr, i)) )
+		}
+		// instruments
+		for (let i = 0, e = libopenmpt._openmpt_module_get_num_instruments(this.modulePtr); i < e; i++) {
+			song.instruments.push( libopenmpt.UTF8ToString(libopenmpt._openmpt_module_get_instrument_name(this.modulePtr, i)) )
+		}
+		// samples
+		for (let i = 0, e = libopenmpt._openmpt_module_get_num_samples(this.modulePtr); i < e; i++) {
+			song.samples.push( libopenmpt.UTF8ToString(libopenmpt._openmpt_module_get_sample_name(this.modulePtr, i)) )
+		}
+		// orders
+		for (let i = 0, e = libopenmpt._openmpt_module_get_num_orders(this.modulePtr); i < e; i++) {
+			song.orders.push( {
+				name: libopenmpt.UTF8ToString(libopenmpt._openmpt_module_get_order_name(this.modulePtr, i)),
+				pat: libopenmpt._openmpt_module_get_order_pattern(this.modulePtr, i),
+			})
+		}
+		// patterns
+		for (let patIdx = 0, patNum = libopenmpt._openmpt_module_get_num_patterns(this.modulePtr); patIdx < patNum; patIdx++) {
+			const pattern = {
+				name: libopenmpt.UTF8ToString(libopenmpt._openmpt_module_get_pattern_name(this.modulePtr, patIdx)),
+				rows: [],
+			}
+			// rows
+			for(let rowIdx = 0, rowNum = libopenmpt._openmpt_module_get_pattern_num_rows(this.modulePtr, patIdx); rowIdx < rowNum; rowIdx++) {
+				const row = []
+				// channels
+				for (let chIdx = 0; chIdx < chNum; chIdx++) {
+					const channel = []
+					for (let comIdx = 0; comIdx < 6; comIdx++) {
+						/* commands
+						OPENMPT_MODULE_COMMAND_NOTE = 0
+						OPENMPT_MODULE_COMMAND_INSTRUMENT = 1
+						OPENMPT_MODULE_COMMAND_VOLUMEEFFECT = 2
+						OPENMPT_MODULE_COMMAND_EFFECT = 3
+						OPENMPT_MODULE_COMMAND_VOLUME = 4
+						OPENMPT_MODULE_COMMAND_PARAMETER = 5
+						*/
+						channel.push( libopenmpt._openmpt_module_get_pattern_row_channel_command(this.modulePtr, patIdx, rowIdx, chIdx, comIdx) )
+					}
+					row.push( channel )
+				}
+				pattern.rows.push( row )
+			}
+			song.patterns.push( pattern )
+		}
+
+
+		return song
 	}
 	getMeta() {
 		if (!libopenmpt.UTF8ToString || !this.modulePtr) return false
@@ -201,8 +304,9 @@ class MPT extends AudioWorkletProcessor {
 			data[keys[i]] = libopenmpt.UTF8ToString(libopenmpt._openmpt_module_get_metadata(this.modulePtr, keyNameBuffer))
 			libopenmpt._free(keyNameBuffer)
 		}
-		data.totalOrders = libopenmpt._openmpt_module_get_num_orders(this.modulePtr)
-		data.totalPatterns = libopenmpt._openmpt_module_get_num_patterns(this.modulePtr)
+		data.song = this.getSong()
+		data.totalOrders = data.song.orders.length	// libopenmpt._openmpt_module_get_num_orders(this.modulePtr)
+		data.totalPatterns = data.song.patterns.length// libopenmpt._openmpt_module_get_num_patterns(this.modulePtr)
 		data.songs = this.getSongs()
 		data.libopenmptVersion = libopenmpt.version
 		data.libopenmptBuild = libopenmpt.build

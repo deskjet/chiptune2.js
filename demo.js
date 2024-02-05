@@ -2,7 +2,7 @@ import {LDR} from 'https://DrSnuggles.github.io/LDR/ldr-zip.min.js'
 import {kkRows} from 'https://DrSnuggles.github.io/kkRows/js/kk-rows.min.js'
 import {Visualizer} from 'https://DrSnuggles.github.io/visualizer/visualizer.min.js' 
 import {dnd} from './dnd.js'
-import {ChiptuneJsPlayer} from './chiptune3.js'
+import {ChiptuneJsPlayer} from './chiptune3.min.js'
 
 let isLoading = false
 
@@ -63,8 +63,8 @@ function initPlayer() {
 		player.meta = meta
 		setMetadata(document.getElementById('modfilename').innerHTML)
 	})
-	player.onProgress((pos) => {
-		document.getElementById('seekbar').value = pos
+	player.onProgress((dat) => {
+		document.getElementById('seekbar').value = dat.pos
 	})
 	player.onError((err) => {
 		nextSong()
@@ -110,7 +110,7 @@ window.nextSong = (url) => {
 function userInteracted() {
 	removeEventListener('keydown', userInteracted)
 	removeEventListener('click', userInteracted)
-	removeEventListener('touchstart', userInteracted)
+	removeEventListener('touchend', userInteracted)
 	removeEventListener('contextmenu', userInteracted)
 
 	audioModal.classList.add('fadeOut')
@@ -120,13 +120,14 @@ function userInteracted() {
 }
 addEventListener('keydown', userInteracted)
 addEventListener('click', userInteracted)
-addEventListener('touchstart', userInteracted)
+addEventListener('touchend', userInteracted)
 addEventListener('contextmenu', userInteracted)
 
 
 init()
 function init() {
-	const allowedExt = 'mptm mod s3m xm it 669 amf ams c67 dbm digi dmf dsm dsym dtm far fmt imf ice j2b m15 mdl med mms mt2 mtm mus nst okt plm psm pt36 ptm sfx sfx2 st26 stk stm stx stp symmod ult wow gdm mo3 oxm umx xpk ppm mmcmp'.split(' ')
+	const allowedExt = 'mptm mod s3m xm it 669 amf ams c67 dbm digi dmf dsm dsym dtm far fmt ice j2b m15 mdl med mms mt2 mtm mus nst okt plm psm pt36 ptm sfx sfx2 st26 stk stm stx stp symmod ult wow gdm mo3 oxm umx xpk ppm mmcmp'.split(' ')
+	// removed: imf 
 	let data = []
 
 	let url = 'https://modland.com/allmods.zip'

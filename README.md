@@ -20,10 +20,8 @@ Why is the Windows version about 4kB smaller?
 
 If you know the answer please let me know.
 
-## ToDo
-- build/rollup to make it a single .js request
-
 ## History
+- 2024-02-04: Metadata contains song, bugfixes and minify
 - 2024-01-24: Added config object, Modland player
 - 2024-01-23: Drag'n'Drop files. Build library using Docker.
 - 2024-01-22: Libopenmpt 0.7.3 compiled with Emscripten 3.1.51

@@ -34,7 +34,7 @@ export class ChiptuneJsPlayer {
 		this.handlers = []
 
 		// worklet
-		this.context.audioWorklet.addModule('/chiptune/chiptune3.worklet.js')
+		this.context.audioWorklet.addModule( new URL('./chiptune3.worklet.min.js', import.meta.url) )
 		.then(()=>{
 			this.processNode = new AudioWorkletNode(this.context, 'libopenmpt-processor', {
 				numberOfInputs: 0,
@@ -64,7 +64,10 @@ export class ChiptuneJsPlayer {
 			case 'pos':
 				//this.meta.pos = msg.data.pos
 				this.currentTime = msg.data.pos
-				this.fireEvent('onProgress', this.currentTime)
+				this.order = msg.data.order
+				this.pattern = msg.data.pattern
+				this.row = msg.data.row
+				this.fireEvent('onProgress', msg.data)
 				break
 			case 'end':
 				this.fireEvent('onEnded')
@@ -115,6 +118,7 @@ export class ChiptuneJsPlayer {
 	setPitch(val) { this.postMsg('setPitch', val) }
 	setTempo(val) { this.postMsg('setTempo', val) }
 	setPos(val) { this.postMsg('setPos', val) }
+	setOrderRow(o,r) { this.postMsg('setOrderRow', {o:o,r:r}) }
 	setVol(val) { this.gain.gain.value = val }
 	selectSubsong(val) { this.postMsg('selectSubsong', val) }
 	// compatibility
