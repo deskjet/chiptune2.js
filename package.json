@@ -1,10 +1,6 @@
 {
+	"scripts": {"minify": "node minify.js"},
 	"devDependencies": {
-		"gulp": "^4.0.2",
-		"gulp-terser": "^2.1.0",
-		"gulp-replace": "^1.1.4",
-		"gulp-rename": "^2.0.0",
-		"gulp-gzip": "^1.4.2",
-		"gulp-brotli": "^3.0.0"
+		"terser": "^4.0.2"
 	}
 }
