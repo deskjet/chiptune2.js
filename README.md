@@ -15,12 +15,10 @@ Exported_Functions: '_malloc','_free','stackAlloc','stackSave','stackRestore','U
 
 CD into docker and run build.bat (Win) or build.sh (Linux)
 
-### Question of the day
-Why is the Windows version about 4kB smaller?
-
-If you know the answer please let me know.
+Afterwards you can minify by "npm run minify"
 
 ## History
+- 2024-03-13: Bumped to 0.7.4
 - 2024-02-04: Metadata contains song, bugfixes and minify
 - 2024-01-24: Added config object, Modland player
 - 2024-01-23: Drag'n'Drop files. Build library using Docker.

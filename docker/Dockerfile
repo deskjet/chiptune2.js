@@ -5,12 +5,12 @@ FROM emscripten/emsdk:latest
 RUN apt update -y && apt upgrade -y && apt install pkg-config -y
 
 # download
-RUN wget https://lib.openmpt.org/files/libopenmpt/src/libopenmpt-0.7.3+release.makefile.tar.gz
+RUN wget https://lib.openmpt.org/files/libopenmpt/src/libopenmpt-0.7.4+release.makefile.tar.gz
 
 # unpack
-RUN tar xzvf libopenmpt-0.7.3+release.makefile.tar.gz && rm libopenmpt-0.7.3+release.makefile.tar.gz
+RUN tar xzvf libopenmpt-0.7.4+release.makefile.tar.gz && rm libopenmpt-0.7.4+release.makefile.tar.gz
 
-WORKDIR /src/libopenmpt-0.7.3+release
+WORKDIR /src/libopenmpt-0.7.4+release
 
 # next line updates EXPORTED_FUNCTIONS
 RUN sed -i "s/'_malloc','_free'/'_malloc','_free','stackAlloc','stackSave','stackRestore','UTF8ToString'/g" build/make/config-emscripten.mk
