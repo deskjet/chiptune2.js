@@ -1,16 +1,19 @@
-# 3.1.51 worked
+# 3.1.56 worked
 FROM emscripten/emsdk:latest
+
+ARG BASE
+ARG FILE
 
 # update / install
 RUN apt update -y && apt upgrade -y && apt install pkg-config -y
 
 # download
-RUN wget https://lib.openmpt.org/files/libopenmpt/src/libopenmpt-0.7.4+release.makefile.tar.gz
+RUN wget $BASE$FILE.makefile.tar.gz
 
 # unpack
-RUN tar xzvf libopenmpt-0.7.4+release.makefile.tar.gz && rm libopenmpt-0.7.4+release.makefile.tar.gz
+RUN mkdir libopenmpt && tar xzvf $FILE.makefile.tar.gz -C ./libopenmpt --strip-components=1
 
-WORKDIR /src/libopenmpt-0.7.4+release
+WORKDIR /src/libopenmpt
 
 # next line updates EXPORTED_FUNCTIONS
 RUN sed -i "s/'_malloc','_free'/'_malloc','_free','stackAlloc','stackSave','stackRestore','UTF8ToString'/g" build/make/config-emscripten.mk

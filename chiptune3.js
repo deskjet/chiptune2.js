@@ -34,7 +34,7 @@ export class ChiptuneJsPlayer {
 		this.handlers = []
 
 		// worklet
-		this.context.audioWorklet.addModule( new URL('./chiptune3.worklet.min.js', import.meta.url) )
+		this.context.audioWorklet.addModule( new URL('./chiptune3.worklet.js', import.meta.url) )
 		.then(()=>{
 			this.processNode = new AudioWorkletNode(this.context, 'libopenmpt-processor', {
 				numberOfInputs: 0,

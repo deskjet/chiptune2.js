@@ -1,6 +1,5 @@
-const fs = require('fs'),
-{ minify } = require('terser')
-const { mainModule } = require('process')
+import fs from 'fs'
+import { minify } from 'terser'
 
 main()
 async function main() {
@@ -28,6 +27,7 @@ async function main() {
 		}
 	}
 	let code = fs.readFileSync('chiptune3.js', 'utf8')
+	code = code.replace('./chiptune3.worklet.js','./chiptune3.worklet.min.js')
 	let minified = await minify(code, config)
 	fs.writeFileSync('chiptune3.min.js', minified.code)
 
