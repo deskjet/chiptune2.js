@@ -18,6 +18,7 @@ CD into docker and run build.bat (Win) or build.sh (Linux)
 Afterwards you can minify by "npm run minify"
 
 ## History
+- 2024-03-18: Bumped to 0.7.5 using Emscripten 3.1.56
 - 2024-03-13: Bumped to 0.7.4
 - 2024-02-04: Metadata contains song, bugfixes and minify
 - 2024-01-24: Added config object, Modland player

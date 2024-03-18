@@ -1,6 +1,6 @@
 {
 	"name": "chiptune3",
-	"version": "0.7.4",
+	"version": "0.7.5",
 	"description": "Chiptune3 the AudioWorklet successor of chiptune2",
 	"browser": "./chiptune3.js",
 	"author": "drsnuggles",
