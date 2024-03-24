@@ -1,4 +1,4 @@
-docker build --build-arg BASE=https://lib.openmpt.org/files/libopenmpt/src/ --build-arg FILE=libopenmpt-0.7.5+release -t emscripten:libopenmpt .
+docker build --build-arg BASE=https://lib.openmpt.org/files/libopenmpt/src/ --build-arg FILE=libopenmpt-0.7.6+release -t emscripten:libopenmpt .
 docker create --name mpt emscripten:libopenmpt
 docker cp mpt:/src/libopenmpt/bin/libopenmpt.js ../libopenmpt.worklet.js
 docker rm mpt

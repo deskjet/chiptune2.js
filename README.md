@@ -8,6 +8,11 @@ Modland demo player: https://DrSnuggles.github.io/chiptune/demo.html
 
 Drop in your favorite songs.
 
+## How to use
+- HTML: Include latest release version via https://drsnuggles.github.io/chiptune/chiptune3.min.js
+- NPM: "npm i chiptune3" will install latest release but there are also upcoming versions available
+- See index.html or demo.html for working examples
+
 ## Build
 Docker was used to build the library
 
@@ -18,6 +23,7 @@ CD into docker and run build.bat (Win) or build.sh (Linux)
 Afterwards you can minify by "npm run minify"
 
 ## History
+- 2024-03-24: Bumped to 0.7.6
 - 2024-03-18: Bumped to 0.7.5 using Emscripten 3.1.56
 - 2024-03-13: Bumped to 0.7.4
 - 2024-02-04: Metadata contains song, bugfixes and minify
