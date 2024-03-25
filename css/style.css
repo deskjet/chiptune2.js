@@ -1,0 +1,58 @@
+body {
+	font: 12pt sans-serif;
+}
+table,
+input[type="range"]
+{
+	width: 100%;
+}
+
+fieldset {
+	border-radius: 10px;
+	border: 1px dotted #00F;
+}
+legend {
+	font-style: italic;
+	font-weight: bold;
+}
+pre {
+	font-size: small;
+}
+
+#audioModal {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: #FFFD;
+	font: 500% sans-serif;
+	line-height: 100vh;
+	text-align: center;
+}
+#audioModal.fadeOut {
+	animation: fadeOut 500ms forwards;
+}
+@keyframes fadeOut {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		z-index: -604;
+	}
+}
+
+#info {
+	width: calc(100% - 427px);
+}
+#myCanvas {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 240px;
+}
+#songSel {
+	width: 100%;
+	height: calc(100vh - 260px);
+}

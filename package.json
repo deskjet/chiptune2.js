@@ -1,0 +1,23 @@
+{
+  "name": "chiptune3",
+  "version": "0.7.6",
+  "description": "Chiptune3 the AudioWorklet successor of chiptune2",
+  "browser": "./chiptune3.js",
+  "author": "drsnuggles",
+  "license": "MIT",
+  "type": "module",
+  "repository": "https://github.com/DrSnuggles/chiptune",
+  "homepage": "https://github.com/DrSnuggles/chiptune#readme",
+  "bugs": "https://github.com/DrSnuggles/chiptune/issues",
+  "scripts": {
+    "minify": "node minify.js"
+  },
+  "files": [
+    "chiptune3.js",
+    "chiptune3.worklet.js",
+    "libopenmpt.worklet.js"
+  ],
+  "devDependencies": {
+    "terser": "^5.27.0"
+  }
+}
